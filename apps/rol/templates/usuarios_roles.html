@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block contenido %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Usuarios y Permisos</title>
+    <style>
+        body {
+            background-color: #f8f9fa; /* Color de fondo más claro */
+        }
+        .container {
+            margin-top: 30px;
+        }
+        .table th, .table td {
+            text-align: center; /* Centra el contenido en las celdas */
+        }
+        .no-permissions {
+            color: #dc3545; /* Color rojo para resaltar */
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container text-white"><br>
+
+        <div class="m-3">
+            <br>
+            <div class="text-center dropup-center display-6 fw-bold opacity-50 fst-italic">USUARIOS y PERMISOS</div>
+            <div class="col-10 m-5 text-lg-center">
+                {% if messages %}
+  
+                  
+                    {% for message in messages %}
+                        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                            <h6 {% if message.tags %}
+                            class="alert alert-danger alert-{{ message.tags }}"{% endif %} role="alert">{{ message }}</h6>
+                        {% endif %}
+                        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                            <h6{% if message.tags %} class="bg-success text-white text-center alert alert-{{ message.tags }}"{% endif %}>{{ message }}</h6>
+                        {% endif %}
+                        
+                    {% endfor %}
+                
+                {% endif %}
+            
+            </div>
+      
+        </div>
+
+        
+        <div style="padding: 5px; display: inline-block; border-radius: 5px;">
+            <a href="{% url 'index' %}">
+                <button class="btn btn-dark" style="padding: 0px;">
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAAXNSR0IArs4c6QAAAUBJREFUWEft1k1OwzAQBeD3ZPtksIQrsCiwgEvQcgVEEQghDgG7IvVGHCCpBrVKiis18U9sE6Rk2zTz5c1oHGJkF0fmwQRydWRKKGtCUlUnNObLVSTk9+iWSV2/ALgGeUel7kOK9t0bBZK6fgRwaz34jFp/pkAFg/bJ/FZ/otY2bpArCJQbs30Tb1AJjBdIRIjN5nk3wJnaZPe4N6EG8w7gogSmN6EOzBu1vhw0tY4/H02oCwOlrkhKUVCDeQUwswp/Q+QBQGrMmsasO2eoI5l8gYgsaMz8/4C20lG1rI1uVEP916iYxZh1FznPstLb2gmyBr3IeeYF2s9V+5WY8ZANAu3SyowKBjWoJYAba8OeU+uPFCs9CnSQFDmnUosUGK8PtL5CUlWnNGaVCjMYlBLSPiu6ZTkwU0I+qU4tc6X0A9D0oSUlvNfRAAAAAElFTkSuQmCC"/>
+                </button>
+            </a>
+        </div><br><br>
+        <div class="div_separador">
+            Registros por página
+         </div>
+
+        <table id="example" class="table table-dark table-striped dt-responsive nowrap m-2  text-white" style="width:100%">
+            <thead>
+                <tr>
+                    <th scope="col" style="text-align: center;">USUARIO</th>
+                    <th scope="col" style="text-align: center;">PERMISOS</th>
+                    <th scope="col" style="text-align: center;">ACCION</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users_with_permissions %}
+               
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>
+                        {% if user.user_permissions.all %}
+                            <ul style="text-align: left;">
+                                {% for permission in user.user_permissions.all %}
+                                    <li >{{ permission.name }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="no-permissions">Ningún permiso asignado</p>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'rolesUsuario' user.id %}" class="btn btn-warning">Modificar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
+
+{% endblock %}
+
+{% block codigo %}
+
+<script src ="{% static '/main.js' %}" ></script>
+<script>
+      $(document).ready(function () {
+            //#users es el id de la tabla
+            $('#example').removeAttr('width').DataTable( {
+              destroy: true,
+              dom: '<Bflitp>',
+              buttons: [
+               
+                    {
+                      extend: 'excelHtml5',
+                      text: '<i class="far fa-file-excel mr-2 btn btn-success btn-sm"></i>',
+                    },
+                    {
+                    extend: 'pdfHtml5',
+                    text: '<i class="far fa-file-pdf mr-2 btn btn-danger btn-sm"></i>',
+                    
+                    }
+              ],
+              columnDefs : [
+                
+                { "width": "40%", "targets": 0, "className": 'dt-head-center' },
+                
+                { "width": "40%", "targets": 1, "className": 'dt-head-center' },
+                { "width": "20%", "targets": 2, "className": 'dt-center' },
+                
+               
+              ],
+                pageLength: 5,
+                fixedHeader: {
+                    header: true,
+                    footer: true
+                },
+                lengthMenu: [[5,10,20,-1],[5,10,20,'Todos']],
+                language: {
+                    zeroRecords: 'No se encontraron Registros',
+                    search:  'Buscar',
+                    lengthMenu:     " _MENU_ ",
+                    info: "REG: _START_ - _END_ de _TOTAL_ ",
+                
+                    paginate: {
+                        first:    '«',
+                        previous: '‹',
+                        next:     '›',
+                        last:     '»'
+                    },
+                    aria: {
+                        paginate: {
+                            first:    'Primera',
+                            previous: 'Anterior',
+                            next:     'Siguiente',
+                            last:     'Ultima'
+                        }
+                    }
+                
+                
+                
+                
+                
+                }
+                
+                   
+                
+            })
+        });
+
+    
+</script>
+{% endblock %}

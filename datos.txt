@@ -1,0 +1,124 @@
+fazt django crud con authentication y despliegue gratuito 2:11:00
+https://developer.mozilla.org/es/docs/Learn/Server-side/Django/Models
+https://www.youtube.com/watch?v=eGDvL-lUehE&list=PLpOqH6AE0tNgL7Jg9Kx4SdfA5_oK6292j&index=2 
+
+instalo django y creo un proyecto dentro de raiz para esto necesito el . punto
+pip install django
+django-admin startproject djangocrud .
+
+debo migrar las tablas que python trae por defecto
+python manage.py migrate
+
+ejecuto el servidor
+python manage.py runserver
+
+crear aplicaciones de nombre task
+python manage.py startapp task 
+
+debo registrar la aplicaciones
+voy a carpeta principal
+djangocrud
+setting.py
+INSTALLED_APPS 
+
+agrego la aplicaciones
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'task'
+
+voy a las views.py de mi app task
+y creo una funcion para la vista
+
+DJANGO tiene una clase para autenticar usuarios
+from django.contrib.auth.forms impor UserCreationFonm
+
+para entrar al admin debo crear un usuario
+python manage.py createsuperuser
+
+para que los modelos esten disponibles en el panel administrador
+voy a myapp admin.py importo los modelos
+from models import Project, Task
+
+# Register your models here.
+admin.site.register(Project,Task)
+
+
+Modelos https://www.youtube.com/watch?v=QBzsoQPgJQ8
+
+adminroot
+admin123
+
+https://www.youtube.com/watch?v=_0l_ZalAg6Q
+
+
+pip install django-environ
+
+
+controlar veces que fallo el login del usuario
+pip install django-axes
+
+# settings.py
+
+INSTALLED_APPS = [
+    'axes', # Axes
+]
+
+AUTHENTICATION_BACKENDS = [
+   'axes.backends.AxesBackend', # Axes must be first
+   'django.contrib.auth.backends.ModelBackend',
+]
+
+# settings.py
+
+MIDDLEWARE = [
+    'axes.middleware.AxesMiddleware', # Axes 
+]
+
+chequeo si todo esta bien
+python manage.py check
+
+ahora debo migrar
+python manage.py migrate
+
+# settings.py
+
+AXES_FAILURE_LIMIT: 6 
+
+resetear todo con 
+python manage.py axes_reset
+
+
+
+pip freeze > requirements.txt
+
+pip install -r requirments.txt
+
+daniel bojorge
+validacin formmulario desde ventana modal
+
+ejecutar en la red
+python manage.py runserver 0.0.0.0:8000
+
+ALLOWED_HOSTS = ['*']
+
+
+
+dashboard 
+
+<script>
+  window.onload = function(e){
+    
+  renderiza_total_vendido('{% url "retorna_total_vendido" %}')
+  renderiza_faturamento_mensal('{% url "relatorio_faturamento" %}')
+  renderiza_despesas_mensal()
+  renderiza_produtos_mais_vendidos('{% url "relatorio_produtos" %}')
+  renderiza_funcionario_mes('{% url "relatorio_funcionario" %}')
+
+
+}
+</script>

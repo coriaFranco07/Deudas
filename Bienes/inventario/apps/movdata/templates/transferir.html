@@ -1,0 +1,95 @@
+<div id="modal_form" class="modal-dialog modal-lg" role="document">
+  <div class="modal-content">
+     <div class="modal-header">
+        
+        <div class="col-auto m-2 text-lg-center" id="errores">
+          {% if messages %}
+
+            
+              {% for message in messages %}
+                  {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                      <h6 {% if message.tags %}
+                      class="alert alert-danger alert-{{ message.tags }}"{% endif %} >{{ message }}</h6>
+                  {% endif %}
+                  {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                      <h6{% if message.tags %} class="bg-success text-white text-center alert alert-{{ message.tags }}"{% endif %}>{{ message }}</h6>
+                  {% endif %}
+                  
+              {% endfor %}
+          
+          {% endif %}
+
+        </div>
+      </div>
+      
+      <div class="col-lg-8 align-self-center">
+              <div class="m-2 text-center bg-opacity-50 text-secondary"><h4><strong >BIENES</strong></h4></div>
+              <div class=" bg-opacity-25 text-primary text-center"><h5><strong >TRANSFERIR</strong></h5></div>
+              <div class="col-12 align-self-center shadow-lg p-3 mb-5 bg-body rounded ">
+                  <form action="{% url 'transferir' form.data.value %}" method="post" id="form_add" class="card card-body text-center"> 
+                            <div class="modal-body data-backdrop=true" id="modal-body">
+                                
+                                                  
+                              <div class="col-lg-12  text-md-center " id="ofi_card">
+                                {% csrf_token %}
+                                
+                                
+                                  <div class="row">
+                                    <div class=" bg-opacity-25 text-primary text-center mt-2"><h6>TIPO DE MOVIMIENTO</h6></div>
+                                    {{ form.estado }}
+                                  </div>
+                                  <div class="row ">
+                                      <div class="col-form-label">
+                                       
+                                      </div>
+                                  </div>
+                                  
+                                
+                                <div class=" bg-opacity-25 text-primary text-center mt-2"><h6>NRO. GDE</h6></div>
+                                
+                                <div class="row mt-2">
+                                  {{ form.gde_mov}}
+                                </div>
+                                <div class=" bg-opacity-25 text-primary text-center mt-2"><h6>OBSERVACIONES</h6></div>
+                                <div class="row mt-2 form-control">
+                                  {{ form.observ_mov}}
+                                </div>
+
+                                <div class="row mt-2">
+                                  <div class=" bg-opacity-25 text-primary text-center mt-2"><h6>DEPENDENCIA DESTINO</h6></div>
+                              </div>
+                            
+                              <div class="row">
+                                  <div class="related-widget-wrapper" data-model-ref="MovData">
+                                    
+                                    {{ form.destino}}
+                                  
+                                  </div>
+                              </div>
+                           
+              
+                                
+                              </div>        
+                                          
+                                              
+                            </div>
+                            <div class="modal-footer">
+                                <button class="close btn btn-success bg-opacity-75" type="button" onclick="modal_cerrar()">Cancelar</button>
+                                <button id="btn_add" type="button" onclick="registrar()" class="btn btn-primary bg-opacity-75">Transferir</button>
+                            </div>
+                  </form>
+              </div>
+              
+            
+          </div>
+      
+  </div>
+</div>
+<script>
+  $(document).ready(function() {
+      $('#destino').select2(
+      );
+      $('#estado').select2(
+      );
+  });
+  </script>

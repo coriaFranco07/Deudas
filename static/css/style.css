@@ -1,0 +1,163 @@
+body{
+    background: linear-gradient(90deg, #0e064b, #02010e);	
+    color: white;
+}
+
+
+.informacoes_basicas{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #181C24;
+    height: 100px;
+    margin-right: auto;
+    border: 1px solid transparent;
+
+    border-image: linear-gradient(to right top, #bd31c4, #8e3bb0, #643b97, #413579, #282c59);
+
+    border-image-slice: 1;
+    margin-left: 1%;
+    
+
+
+}
+
+.icone{
+    color: #4089c0;
+    width: 40px;
+ 
+
+}
+
+.opciones{
+
+    color: #4089c0;
+    background-color: #282c59;
+    font-size: smaller;
+}
+.selector_opciones{
+
+    background-color: #bd31c4 !important;
+}
+
+.heading {
+    font-size: 2vw;
+    text-shadow: 4px 4px 0px #354c62;
+    mix-blend-mode: screen;
+    animation: fadeIn 1.5s linear forwards;
+  }
+  
+  @keyframes fadeIn {
+      0% {
+          opacity: 0
+      }
+  
+      100% {
+          opacity: 1;
+      }
+  }
+
+  .margin{
+    margin: 20px;
+  }
+
+  div.dataTables_length select {
+    color: rgb(213, 221, 213) !important;
+    background-color: rgb(4, 4, 65) !important; 
+  }
+
+ 
+
+ .dt-button-collection {
+  background: rgb(10, 7, 7) !important;
+  color: rgb(255, 255, 255) !important;
+ 
+}
+
+ .centratdo{
+
+    position: relative;
+  }
+
+  .centratdo h1{
+    position: absolute;
+    top: 50%;
+    width: 100%;
+  }
+
+
+ .imagenes {
+      
+      background-size: cover;
+      background-position: center 45%;
+      background-repeat: no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      opacity: 0.5;
+  }
+
+
+  
+
+
+  .portada {
+    height: 100vh;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    text-align: center;
+    position: relative;
+  }
+  
+  #portada {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -100;
+  }
+  
+  
+  
+  
+  
+  .presentacion1 {
+    font-size: 45px;
+    font-weight: bold;
+    color: #FFF;
+  }
+
+  .presentacion2 {
+    font-size: 38px;
+    font-weight: bold;
+    color: #FFF;
+  }
+
+  .aparecer {
+    opacity: 0; /* Inicialmente, el título estará oculto */
+    animation: aparecer 2s ease-in forwards; /* Animación de 1 segundo con efecto ease-in */
+  }
+  .aparecer2 {
+    opacity: 0; /* Inicialmente, el título estará oculto */
+    animation: aparecer 4s ease-in forwards; /* Animación de 1 segundo con efecto ease-in */
+  }
+
+  @keyframes aparecer {
+      from {
+          opacity: 0; /* Inicio de la animación: completamente transparente */
+      }
+      to {
+          opacity: 1; /* Fin de la animación: completamente visible */
+      }
+  }
+  
+
+  .format_head{
+
+    font-size: 18px;
+    font-weight: bold;
+    color: #FFF;
+  }
+ 

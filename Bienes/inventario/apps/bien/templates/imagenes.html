@@ -1,0 +1,174 @@
+<div id="modal_form" class="modal-dialog flex-md-column-reverse" role="document" style="z-index: 1600">
+    <div class="modal-content">
+       <div class="modal-header">
+          
+          <div class="align-baseline" id="errores">
+            {% if messages %}
+  
+              
+                {% for message in messages %}
+                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                        <h6 {% if message.tags %}
+                        class="alert alert-danger alert-{{ message.tags }}"{% endif %} >{{ message }}</h6>
+                    {% endif %}
+                    {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                        <h6{% if message.tags %} class="bg-success text-white text-center alert alert-{{ message.tags }}"{% endif %}>{{ message }}</h6>
+                    {% endif %}
+                    
+                {% endfor %}
+            
+            {% endif %}
+  
+          </div>
+        </div>
+        
+        <div class="col-lg-10 align-self-center">
+                <div class="m-1 text-center bg-opacity-50 text-secondary"><h4><strong >BIENES</strong></h4></div>
+                <div class=" bg-opacity-25 text-primary text-center"><h5><strong >IMAGENES DEL BIEN</strong></h5></div>
+                <div class=" bg-opacity-25 text-secondary text-center text-xsmall"><strong >CUPI: {{ bien.cupi }}</strong></div>
+                
+                <div class="col-form-label-lg align-self-center shadow-lg p-3 mb-5 bg-body rounded ">
+                    <form action="{% url 'add_imagen' bien.slug  %}" method="post" enctype="multipart/form-data" id="form_add" class="card card-body text-center"> 
+                              <div class="modal-body row-cols-lg-auto" id="modal-body">
+                  
+                                <div class="col-sm-12 "  id="bien_card">
+                                  {% csrf_token %}
+
+                                                                                 
+                                          <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                                            <div class="carousel-inner" id="imagenes_carousel">
+                                              
+                                              
+                                                {% for img in images %}
+                                                      
+                                                
+                                                      {% if forloop.first %}
+                                                        <div class="carousel-item active">
+                                                      {% else %}
+                                                         <div class="carousel-item">  
+                                                      {% endif %}     
+                                                        
+                                                        <button class="btn align-baseline" type="button" onclick="del_img('{{ img.slug }}')"><strong class="btn btn-danger">-</strong></button>  
+                                                        <a href="{{img.img_bien.url}}"  onclick="window.open(this.href, 'mywin',
+                                                        'left=20,top=20,width=500,height=500,toolbar=1,resizable=1'); return false;"><img src="{{img.img_bien.url}}" alt="imagen bien" class="d-block image" alt="imagen" ></a>
+                                                        
+                                                        
+                                                      </div>
+                                                     
+
+                                                      
+                                                  {% empty %}
+                                                  <p>Sin imagenes registradas </p>
+                                                   
+                                                {% endfor %}
+                                              
+                                               
+                                              
+                                               
+                                              
+                                              
+                                              
+                                            </d>
+                                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev" id="prev">
+                                              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                              <span class="visually-hidden">Previous</span>
+                                            </button>
+                                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next" id="next">
+                                              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                              <span class="visually-hidden">Next</span>
+                                            </button>
+                                          </div>  
+                                          
+                                      
+
+                                 
+                                </div>
+
+                              </div>
+                              
+                                  <div class="modal-footer mt-4">
+                                  <button class="close btn btn-success bg-opacity-75" type="button" onclick="modal_cerrar()">Salir</button>
+                                  <button id="btn_add" type="button" onclick="modal_data('{% url 'add_imagen' bien.slug  %}')" class="btn btn-primary bg-opacity-75">Agregar</button>
+                                 
+                    </form>
+                </div>
+                
+              
+            </div>
+        
+    </div>
+  </div>
+  <script>
+
+  function del_img(slug){
+    Swal.fire({
+        title: 'Eliminar Imagen',
+        text: "Esta Seguro?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, Eliminar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+         
+            var data ={'slug':slug,'csrfmiddlewaretoken':'{{ csrf_token }}' };
+            
+            $.ajax({
+                url: '/imagenes/del_img_bien/' + slug,
+                type:'POST',
+                dataType: "json",
+                data:data,
+                success: function(data){
+                  notificacionSuccessImg(data.message)  
+                },
+                error: function(data){
+                    
+                    notificacionErrorImg(data.responseJSON.message)
+                    
+                }  
+              
+        
+          }) 
+        }             
+
+    })
+            
+                 
+ 
+}
+
+function notificacionErrorImg(mensaje){
+    Swal.fire({
+        title: 'Error',
+        text: mensaje,
+        icon: 'error'
+    })
+}
+
+function notificacionSuccessImg(mensaje){
+    Swal.fire({
+        title: 'Imagen Eliminada',
+        text: mensaje,
+        icon: 'success',
+        confirmButtonText: "Aceptar",
+        showLoaderOnConfirm: true,
+        
+    }).then(resultado => {
+        if (resultado.value) {
+            window.location.reload();
+        }
+    })
+}
+
+const openInNewWindow = event => {
+  event.preventDefault();
+  const {href, target} = event.currentTarget;
+  const features = "resizable";
+  window.open(href, target, features);
+};
+
+
+document.querySelector("a")
+  .addEventListener("click", openInNewWindow);
+ 

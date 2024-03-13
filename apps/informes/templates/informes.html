@@ -1,0 +1,498 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block contenido %}
+
+<div class="container" style="margin-right: 425px;">
+    <div class="m-3">
+     
+<br><br>
+          <div class="text-center dropup-center display-6 fw-bold opacity-50 fst-italic">REGISTRO UNICO DE PAGO</div>
+          <div class="col-10 m-5 text-lg-center">
+              {% if messages %}
+
+                
+                  {% for message in messages %}
+                      {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                          <h6 {% if message.tags %}
+                          class="alert alert-danger alert-{{ message.tags }}"{% endif %} role="alert">{{ message }}</h6>
+                      {% endif %}
+                      {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                          <h6{% if message.tags %} class="bg-success text-white text-center alert alert-{{ message.tags }}"{% endif %}>{{ message }}</h6>
+                      {% endif %}
+                      
+                  {% endfor %}
+              
+              {% endif %}
+          
+          </div>
+    
+    
+    </div>
+  
+    <div style="padding: 5px; display: inline-block; border-radius: 5px;">
+        <a href="{% url 'index' %}">
+            <button class="btn btn-dark" style="padding: 0px;">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAAXNSR0IArs4c6QAAAUBJREFUWEft1k1OwzAQBeD3ZPtksIQrsCiwgEvQcgVEEQghDgG7IvVGHCCpBrVKiis18U9sE6Rk2zTz5c1oHGJkF0fmwQRydWRKKGtCUlUnNObLVSTk9+iWSV2/ALgGeUel7kOK9t0bBZK6fgRwaz34jFp/pkAFg/bJ/FZ/otY2bpArCJQbs30Tb1AJjBdIRIjN5nk3wJnaZPe4N6EG8w7gogSmN6EOzBu1vhw0tY4/H02oCwOlrkhKUVCDeQUwswp/Q+QBQGrMmsasO2eoI5l8gYgsaMz8/4C20lG1rI1uVEP916iYxZh1FznPstLb2gmyBr3IeeYF2s9V+5WY8ZANAu3SyowKBjWoJYAba8OeU+uPFCs9CnSQFDmnUosUGK8PtL5CUlWnNGaVCjMYlBLSPiu6ZTkwU0I+qU4tc6X0A9D0oSUlvNfRAAAAAElFTkSuQmCC"/>
+            </button>
+        </a>
+      </div>
+  
+ 
+  <table id="lotes" class="table table-dark table-striped dt-responsive nowrap m-2 " style="width:100%" >
+  <thead>
+      <tr class="bg-primary text-white opacity-50" >
+          
+          <th scope="col">ORDEN</th>
+          <th scope="col">REC.</th>
+          <th scope="col">EXPTE. RECLAMO</th>
+          <th scope="col">LEGAJO</th>
+          <th scope="col">TIPO</th>
+          <th scope="col">DESDE</th>
+          <th scope="col">HASTA</th>
+          <th scope="col">NORMA REC.</th>
+          <th scope="col">FEC. ORDEN</th>
+          <th scope="col">FEC. PRIOR.</th>
+          <th scope="col">MOV. PRIOR.</th>
+          <th scope="col">GDE. PRIOR.</th>
+          <th scope="col">NORMA PRIOR.</th>
+          <th scope="col">DESC. PRIOR.</th>
+          <th scope="col">NIVEL PRIOR.</th>
+
+          <th scope="col">MONTO NETO</th>
+          <th scope="col">MONTO TOTAL</th>
+          <th scope="col">FEC. MONTO</th>
+          
+ 
+          
+          
+      </tr>
+  </thead>
+  <tbody>
+    {% for mrc in reclamos %}
+      <tr>
+        
+        <td>{{ mrc.prioridad_reclamos.orden }}</td>
+        <td>{{ mrc.id_rec }}</td>
+        <td>{{ mrc.gde_mov }}</td>
+        <td>{{ mrc.id_legajo }}</td>
+        <td>{{ mrc.id_tipo_rec }}</td>
+        <td>{{ mrc.fch_dsd_rec|date:'d-m-Y' }}</td>
+        <td>{{ mrc.fch_hst_rec|date:'d-m-Y' }}</td>
+        <td>{{ mrc.norma_legal_rec }}</td>
+        <td>{{ mrc.prioridad_reclamos.fch_orden|date:'d-m-Y' }}</td>
+        <td>{{ mrc.prioridad_reclamos.id_mov.fch_std_mov|date:'d-m-Y' }}</td>
+        <td>{{ mrc.prioridad_reclamos.id_mov.id_std_mov.dsc_std_mov }}</td>
+        <td>{{ mrc.prioridad_reclamos.id_mov.gde_mov }}</td>
+        <td>{{ mrc.prioridad_reclamos.norma_legal_prior }}</td>
+        <td>{{ mrc.prioridad_reclamos.id_prior.dsc_prior }}</td>
+        <td>{{ mrc.prioridad_reclamos.id_prior.nivel_prior }}</td>
+
+        <td>{{ mrc.deudas_reclamos.neto }}</td>
+        <td>{{ mrc.deudas_reclamos.total }}</td>
+        <td>{{ mrc.deudas_reclamos.fch_calculo|date:'d-m-Y' }}</td>
+        
+        
+          
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+</div>
+<div class="modal fade" id="data" role="dialog">
+
+
+</div>
+
+{% endblock %}
+{% block codigo %}
+<script>
+  $(document).ready(function () {
+            var myGlyph = new Image();
+            myGlyph.src =  src="{% static 'img/informehead.jpg' %}"//document.getElementById('portada').getAttribute('src');
+            //#users es el id de la tabla
+            var dataTable= $('#lotes').removeAttr('width').DataTable( {
+                deferRender: true,
+              
+              dom: 'fBlitp',
+              stateSave: false,
+              buttons: [
+                    {
+                    extend: 'excelHtml5',
+                    text: '<i class="far fa-file-excel mr-2 btn btn-success btn-sm"></i>',
+                    title: 'REGISTRO UNICO DE PAGO',
+                      
+                      
+                    exportOptions: {
+                           columns: [ 1, ':visible' ],
+                          excelStyles: [                      // Add an excelStyles definition
+                              {                 
+                                template: 'cyan_medium',
+                              },
+                             
+                              {
+                                 // cells: ['A','B','C'],  // Use Smart References (s) to target the header row (h) 
+                                                 
+                                  style: {                    // The style definition
+                                      font: {                 // Style the font
+                                          name: 'Arial',
+                                          size: '8',           // Size 14
+                                          b: false,
+                                          i:true,
+                                                    // Turn off the default bolding of the header row
+                                          
+                                      },
+                                      
+                                      alignment: {
+                                        vertical: "center",
+                                        horizontal: "center",
+                                        wrapText: false,
+                                     },
+                                    
+ 
+                                  },
+                              },
+                              {
+                                  cells: 'sh',  // Use Smart References (s) to target the header row (h) 
+                                                 
+                                  style: {                    // The style definition
+                                      font: {                 // Style the font
+                                          name: 'Arial',
+                                          size: '10',           // Size 14
+                                          b: true,
+                                          color: 'FFFFFF',           // Turn off the default bolding of the header row
+                                          
+                                      },
+                                      fill: {                 // Style the cell fill
+                                          pattern: {          // Add a pattern (default is solid)
+                                              color: '1C3144', // Define the fill color
+                                              
+                                              
+                                          }
+                                      },
+                                      alignment: {
+                                        vertical: "center",
+                                        horizontal: "center",
+                                        wrapText: false,
+                                     },
+ 
+                                  },
+                              },
+                           
+                              {
+                                  cells: 'st',  // Use Smart References (s) to target the header row (h) 
+                                                 
+                                  style: {                    // The style definition
+                                      font: {                 // Style the font
+                                          name: 'Arial',
+                                          size: '20',           // Size 14
+                                          b: true,
+                                          color: 'FFFFFF',           // Turn off the default bolding of the header row
+                                          
+                                      },
+                                      fill: {                 // Style the cell fill
+                                          pattern: {          // Add a pattern (default is solid)
+                                              color: '1C3144', // Define the fill color
+                                              
+                                              
+                                          }
+                                      },
+                                      alignment: {
+                                        vertical: "center",
+                                        horizontal: "center",
+                                        wrapText: false,
+                                     },
+ 
+                                  },
+                              },
+                           
+                           
+                          {
+                            cells: ['sA'],  //condicion para las filas de la columna A
+                            
+                            style:{
+                              font:{
+                                name: 'Arial',
+                                size: '8',           // Size 14
+                                b: true,
+                                
+                                
+                              },
+                              
+                            },
+                            fill: {                 // Style the cell fill
+                                     pattern: {          // Add a pattern (default is solid)
+                                        color: '1C3144', // Define the fill color
+                                              
+                                              
+                                     }
+                                   },
+                          },
+
+                        ],      
+                      
+
+
+
+                    },  
+                    
+                    },
+                    {
+                    extend: 'pdfHtml5', title: '',
+                    orientation: 'landscape',
+                    pageSize: 'LEGAL',
+                    text: '<i class="far fa-file-pdf mr-2 btn btn-danger btn-sm"></i>',
+                    alignment: "center",
+                    //title: 'REGISTRO UNICO DE PAGO',
+                    customize: function ( doc ) {
+
+
+                      var rowCount = doc.content[0].table.body.length;
+                     
+                      
+                          
+                          
+                          doc.content.splice( 0,0, {
+                              margin: [ 100, 50, 100, 40 ],
+                              alignment: 'center',
+                              image: getBase64Image(myGlyph),
+                              width: 700,
+                              height: 100,
+                          });
+                          doc.pageMargins = [100,50,100,40];
+                          doc.content[1].layout = "borders";
+
+                          
+                         
+
+                         
+                          
+                        },
+                        
+                        
+                      
+                      exportOptions: {
+                        stripHtml: false,
+                            
+                            columns: [ 0,2,3,4,7,9,16 ],
+                            pageStyle: {
+                                sheetPr: {
+                                    pageSetUpPr: {
+                                        fitToPage: 1            // Fit the printing to the page
+                                    } 
+                                },
+                                printOptions: {
+                                    horizontalCentered: true,
+                                    verticalCentered: true,
+                                },
+                                pageSetup: {
+                                    orientation: "landscape",   // Orientation
+                                    paperSize: "1",             // Paper size (1 = Letter, 9 = A4)
+                                    fitToWidth: "100",            // Fit to page width
+                                    fitToHeight: "0",           // Fit to page height
+                                },
+                                pageMargins: {
+                                    left: "0.1",
+                                    right: "0.1",
+                                    top: "5",
+                                    bottom: "0.4",
+                                    header: "5",
+                                    footer: "2",
+                                },
+                                repeatHeading: true,    // Repeat the heading row at the top of each page
+                                repeatCol: 'A:A',       // Repeat column A (for pages wider than a single printed page)
+                            },
+                            
+                            
+                            excelStyles: [                      // Add an excelStyles definition
+                                {                 
+                                  template: 'header_blue',
+                                  
+                                 
+                                },
+                                
+                                
+                                {
+
+                                   // cells: ['A','B','C'],  // Use Smart References (s) to target the header row (h) 
+                                                   
+                                    style: {                    // The style definition
+                                        font: {                 // Style the font
+                                            name: 'Arial',
+                                            size: '4',           // Size 14
+                                            b: false,
+                                            i:true,
+                                                      // Turn off the default bolding of the header row
+                                            
+                                        },
+                                        
+                                        alignment: {
+                                          vertical: "center",
+                                          horizontal: "center",
+                                          wrapText: false,
+                                       },
+                                        title: {
+                                          alignment: 'center',
+                                          fontSize: '14',
+                                          
+                                      },
+                                        
+                                         
+
+                                      
+                                      
+   
+                                    },
+                                },
+                               
+                            ],      
+                           
+  
+  
+  
+                      },  
+                      
+                    
+                    },
+                    {
+                    
+                    extend: 'colvis',
+                    style:{
+                      fill: {                 // Style the cell fill
+                           pattern: {          // Add a pattern (default is solid)
+                                color: '1C3144', // Define the fill color
+                                              
+                                              
+                             },
+                        },
+                    
+                    },
+                  }  
+                   
+              ],
+              
+              columnDefs : [
+                
+                { "width": "5%", "targets": 0, "className": 'dt-center' },
+                { "width": "5%", "targets": 1, "className": 'dt-center' },
+                { "width": "5%", "targets": 2, "className": 'dt-center' },
+                { "width": "5%", "targets": 3, "className": 'dt-center' },
+                { "width": "5%", "targets": 4, "className": 'dt-center' },
+                { "width": "5%", "targets": 5, "className": 'dt-center' },
+                { "width": "5%", "targets": 6, "className": 'dt-center' },
+                { "width": "5%", "targets": 7, "className": 'dt-center' },
+                { "width": "5%", "targets": 8, "className": 'dt-center' },
+                { "width": "5%", "targets": 9, "className": 'dt-center' },
+                { "width": "5%", "targets": 10, "className": 'dt-center' },
+                { "width": "5%", "targets": 11, "className": 'dt-center'},
+                { "width": "5%", "targets": 12, "className": 'dt-center'},
+               
+                { "width": "5%", "targets": 13, "className": 'dt-center' },
+                { "width": "5%", "targets": 14, "className": 'dt-center' },
+                { "width": "5%", "targets": 15, "className": 'dt-center' },
+                { "width": "5%", "targets": 16, "className": 'dt-center' },
+                { "width": "5%", "targets": 17, "className": 'dt-center' },
+
+                { "render": $.fn.dataTable.render.number( ',', '.', 2, '$','' ), "targets":[15,16]},
+                
+            
+               
+              ],
+             
+                pageLength: 5,
+                fixedHeader: {
+                    header: true,
+                    footer: true
+                },
+                lengthMenu: [[5,10,20,-1],[5,10,20,'Todos']],
+                language: {
+                    zeroRecords: 'No se encontraron Registros',
+                    search:  'Buscar',
+                    lengthMenu:     " _MENU_ ",
+                    info: "REG: _START_ - _END_ de _TOTAL_ ",
+                    buttons: {
+                        colvis: 'Columnas'
+                    },
+                
+                    paginate: {
+                        first:    '«',
+                        previous: '‹',
+                        next:     '›',
+                        last:     '»'
+                    },
+                    aria: {
+                        paginate: {
+                            first:    'Primera',
+                            previous: 'Anterior',
+                            next:     'Siguiente',
+                            last:     'Ultima'
+                        }
+                    },
+                    
+                    
+                
+                
+                
+                
+                
+                },
+                
+                   
+              
+              });              
+             
+              $('#lotes thead tr').clone(true).addClass('filters').appendTo('#lotes thead');
+    
+            //--------------------
+            
+            
+            //-------------------
+                     
+    const render_table =  () => {
+     
+      const prevInputs = [];
+      dataTable.columns().every(function(){
+        prevInputs.splice(this.index(), 1, $(`#lotes thead [colindex="${this.index()}"]`).val());
+        
+
+        
+      });
+
+
+      $('#lotes thead tr:eq(1) ').each( function () {
+          var title = $(this).text();
+          $(this).html( '<th><input type="text" placeholder="Search '+title+'" class="column_search" /></th>' );
+          console.log(title)
+      } );
+     
+      $('#lotes thead tr:eq(1)').empty()
+      
+      dataTable.columns().every(function(){
+       
+        this.visible() ?
+        
+        $('#lotes thead tr:eq(1)').append(`<th><input class="text-center form-control " colindex="${this.index()}" placeholder="${$(this.header()).text()}" value="${prevInputs[this.index()] || ''}"></input></th>`) :
+        true;
+      });
+    };
+    
+    render_table();
+    
+    $('#lotes').on('column-visibility.dt', render_table);
+    
+    $('#lotes').on('keyup', 'thead input', function(event){
+      dataTable.column($(event.target).attr('colindex')).search($(event.target).val()).draw();
+    });
+
+    function getBase64Image(img) {
+                var canvas = document.createElement("canvas");
+                canvas.width = img.width;
+                canvas.height = img.height;
+                var ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0);
+                return canvas.toDataURL("image/png");
+            }
+            
+});
+</script>
+{% endblock %}

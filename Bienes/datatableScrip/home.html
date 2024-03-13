@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+{% load static %}
+
+    
+    
+    
+{% block estilos %}
+<link rel="stylesheet" href="{% static 'css/css.css' %}">
+
+
+
+
+
+
+{% endblock %}
+{% block contenido %}
+
+<div class="container">
+  <br>
+  <div class="row">
+
+      <div  class="col-md informacoes_basicas">
+        <div class="m-2"> 
+          <h5>Pendiente:  </h5>
+        </div>
+        <h1><svg style="color: #69BDCB;" class="icone" xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="bi bi-cart-plus" viewBox="0 0 16 16">
+          <path d="M9 5.5a.5.5 0 0 0-1 0V7H6.5a.5.5 0 0 0 0 1H8v1.5a.5.5 0 0 0 1 0V8h1.5a.5.5 0 0 0 0-1H9V5.5z"/>
+          <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zm3.915 10L3.102 4h10.796l-1.313 7h-8.17zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+        </svg> &nbsp$ <span id="deuda_total">0</span></h1> 
+          
+      </div>
+      
+      <div class="col-md informacoes_basicas">
+        <div class="m-2"> 
+          <h5>Pagado:  </h5>
+        </div>
+        <h1><svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor" class="icone bi bi-person-square" viewBox="0 0 16 16">
+          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+          <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1v-1c0-1-1-4-6-4s-6 3-6 4v1a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"/>
+        </svg> &nbsp$ <span id="pago_total">0</span></h1> 
+      </div>
+      
+      <div class="col-md informacoes_basicas">
+        <div class="m-2"> 
+          <h5>Presupuesto:  </h5>
+        </div>
+          <h1><svg  class="icone" xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-cash-coin" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M11 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm5-4a5 5 0 1 1-10 0 5 5 0 0 1 10 0z"/>
+              <path d="M9.438 11.944c.047.596.518 1.06 1.363 1.116v.44h.375v-.443c.875-.061 1.386-.529 1.386-1.207 0-.618-.39-.936-1.09-1.1l-.296-.07v-1.2c.376.043.614.248.671.532h.658c-.047-.575-.54-1.024-1.329-1.073V8.5h-.375v.45c-.747.073-1.255.522-1.255 1.158 0 .562.378.92 1.007 1.066l.248.061v1.272c-.384-.058-.639-.27-.696-.563h-.668zm1.36-1.354c-.369-.085-.569-.26-.569-.522 0-.294.216-.514.572-.578v1.1h-.003zm.432.746c.449.104.655.272.655.569 0 .339-.257.571-.709.614v-1.195l.054.012z"/>
+              <path d="M1 0a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h4.083c.058-.344.145-.678.258-1H3a2 2 0 0 0-2-2V3a2 2 0 0 0 2-2h10a2 2 0 0 0 2 2v3.528c.38.34.717.728 1 1.154V1a1 1 0 0 0-1-1H1z"/>
+              <path d="M9.998 5.083 10 5a2 2 0 1 0-3.132 1.65 5.982 5.982 0 0 1 3.13-1.567z"/>
+            </svg> &nbsp$ <span id="presupuesto">0</span></h1> 
+      </div>
+     
+  </div>
+
+  
+  
+  
+  <div class="row">
+   
+      
+      <div class="col-md">
+        <div class="m-sm-2" with>
+          <select  id="estados_select" multiple="multiple"  class="selector_opciones" ></select>
+          
+          <button id="btn_filtrar_movs" class="btn btn-outline-primary" onclick="getSelectedOptions()">Filtrar</button>
+         </div>
+        
+
+
+
+          <br>
+
+          <h1>Tipos de Movimientos:</h1>
+          <canvas id="reclamos_periodos" width="250" height="200"></canvas>
+      </div>
+      
+      
+
+  </div>
+
+  <div class="row">
+      
+            
+        <div class="col-md">
+              <br>
+              <h1>Monto Total Tipo Rec:</h1>
+              <canvas id="tipos_reclamos" width="100" height="100"></canvas>
+        </div>
+
+        <div class="col-md">
+              <br>
+              <h1>Monto Pend.Tipo Rec:</h1>
+              <canvas id="reclamos_pendientes" width="100" height="100"></canvas>
+        </div>
+  </div>
+
+  <div class="row">
+      
+            
+    
+  </div>
+
+  <div class="row">
+      
+            
+    
+</div>
+
+<div class="row m-lg-4" >
+
+      <div class="col-md">
+               <br>
+                <h1>Cant.Totales Tipo: </h1>
+                <canvas id="cantportipo" width="100" height="100"></canvas>
+      </div>
+      
+            
+      <div class="col-md">
+            <br>
+            <h1>Cant. Pendi. Tipo: </h1>
+            <canvas id="cantportipopen" width="100" height="100"></canvas>
+      </div>
+</div>
+
+ 
+
+
+</div>
+
+<div class="container">
+  <div class="rou my-4">
+    <div class="col-sm-12 row-cols-md-6 col-lg-6 col-xl-6 mx-auto">
+      <div id="chart" class="chart"></div>
+
+
+    </div>
+  </div>
+</div>
+
+<br>
+<footer class="container">
+  <br>
+  <div class="row">
+      <div style="color: white;" class="col-md centralizar">
+        Registro Unico de Pago
+      </div>
+
+      <div style="color: white;" class="col-md centralizar">
+        2024 Dirección Administración
+      </div>
+
+      <div style="color: white;" class="col-md centralizar">
+        Ministerio de Seguridad y Justicia
+      </div>
+  </div>
+  <br>
+
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/js.js' %}"></script>
+
+
+<script>
+  window.onload = function(e){
+    
+    renderiza_deuda_total('{% url "total_rec_pendientes" %}'),
+    renderiza_pago_total('{% url "total_rec_pagados" %}'),
+    //renderiza_reclamos_periodo('{% url "reclamos_periodos" %}'),
+    renderiza_tipos_reclamos('{% url "tipos_reclamos" %}'),
+    renderiza_reclamos_pendientes('{% url "reclamos_pendientes" %}')
+   
+
+    //renderiza_ejemplo_tipos('{% url "tipos_reclamos" %}'),
+    //renderiza_ejemplo_graficos('{% url "tipos_reclamos" %}'),
+    renderiza_presupuesto('{% url "presupuesto" %}'),
+    renderiza_reclamosenlotes('{% url "reclamosenlotes" %}')
+    renderiza_cantportipo('{% url "cantportipo" %}'),
+    renderiza_cantportipopen('{% url "cantportipopen" %}')
+
+
+    renderiza_tipomov('{% url "tipomov" %}')
+    renderiza_filtros_mov('{% url "filtros_mov" %}')
+
+    
+   
+    
+
+    
+
+}
+
+</script>
+
+<script>
+
+function getSelectedOptions() {
+  
+  const sel = [...$("#estados_select :selected")].map(e => e.value);
+  
+ 
+    var opts = [],
+      opt;
+    var len = sel.length;
+    for (var i = 0; i < len; i++) {
+      opt = sel[i];
+      
+  
+      if (opt) {
+        opts.push(opt);
+        
+      }
+    }
+
+
+    //return window.location.replace("{% url 'grafico_select' %}?type={{ opts.type }}&size={{ opts.size }}")
+    var url = "{% url 'grafico_select' %}" + "?param=" + encodeURIComponent(opts);   
+    
+     //window.location.href=url
+     renderiza_reclamos_periodo(url)
+    //return opts;
+  }
+
+  </script>
+ 
+ <script>
+
+
+   document.getElementById('btn_filtrar_movs').onclick , function() {
+
+     
+     
+    const ids = [...$("#estados_select :selected")].map(e => e.id);
+    
+    console.log('presione el puto boton')
+   
+
+    
+  
+  }
+
+
+
+ </script>
+ 
+
+
+
+{% endblock %}

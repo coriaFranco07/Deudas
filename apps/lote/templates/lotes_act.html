@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block contenido %}
+
+<div class="container">
+    <div class="m-3">
+
+          <div class="text-center dropup-center display-6 fw-bold opacity-50 fst-italic">LISTADO DE LOTES EN PROCESO</div>
+          <div class="col-10 m-5 text-lg-center">
+              {% if messages %}
+
+                
+                  {% for message in messages %}
+                      {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                          <h6 {% if message.tags %}
+                          class="alert alert-danger alert-{{ message.tags }}"{% endif %} role="alert">{{ message }}</h6>
+                      {% endif %}
+                      {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                          <h6{% if message.tags %} class="bg-success text-white text-center alert alert-{{ message.tags }}"{% endif %}>{{ message }}</h6>
+                      {% endif %}
+                      
+                  {% endfor %}
+              
+              {% endif %}
+          
+          </div>
+    
+    
+    </div>
+  
+    <div class="mt-4 d-inline-flex">
+      
+      <div style="padding: 0px; border-radius: 10px;" class="margin">
+          <a href="{% url 'index' %}">
+              <button class="btn btn-dark" style="padding: 0px;">
+                  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAAXNSR0IArs4c6QAAAUBJREFUWEft1k1OwzAQBeD3ZPtksIQrsCiwgEvQcgVEEQghDgG7IvVGHCCpBrVKiis18U9sE6Rk2zTz5c1oHGJkF0fmwQRydWRKKGtCUlUnNObLVSTk9+iWSV2/ALgGeUel7kOK9t0bBZK6fgRwaz34jFp/pkAFg/bJ/FZ/otY2bpArCJQbs30Tb1AJjBdIRIjN5nk3wJnaZPe4N6EG8w7gogSmN6EOzBu1vhw0tY4/H02oCwOlrkhKUVCDeQUwswp/Q+QBQGrMmsasO2eoI5l8gYgsaMz8/4C20lG1rI1uVEP916iYxZh1FznPstLb2gmyBr3IeeYF2s9V+5WY8ZANAu3SyowKBjWoJYAba8OeU+uPFCs9CnSQFDmnUosUGK8PtL5CUlWnNGaVCjMYlBLSPiu6ZTkwU0I+qU4tc6X0A9D0oSUlvNfRAAAAAElFTkSuQmCC"/>
+              </button>
+          </a>
+      </div>
+      <div class="margin">
+          <button onclick="modal_data('{% url 'add_lote' %}')" class="btn btn-block btn-primary">Agregar</button>
+      </div>
+      <div class="margin">
+          <a class="btn btn-outline-danger btn-xs" href="{% url 'calcular_lotes' user 0 %}" title="Calcular Lotes">Calcular Lotes ajuste por ordenes</a>
+      </div>
+      <div class="margin">
+          <a class="btn btn-outline-warning btn-xs" href="{% url 'calcular_lotes' user 1 %}" title="Calcular Lotes">Calcular Lotes ajuste por montos</a>
+      </div>
+  </div>
+  
+  
+ <div class="div_separador">
+    Registros por página
+ </div>
+  
+  <table id="lotes" class="table table-dark table-striped dt-responsive nowrap m-2 " style="width:100%" >
+  <thead>
+      <tr class="bg-primary text-white opacity-50" >
+          
+          <th scope="col">LOTE NRO.</th>
+          <th scope="col">LOTE AÑO</th>
+          <th scope="col">LOTE NIVEL</th>
+          <th scope="col">LOTE IMPORTE</th>
+          <th scope="col">LOTE SALDO</th>
+          <th scope="col">LOTE ESTADO.</th>
+          <th scope="col">ACCIONES</th>
+          
+      </tr>
+  </thead>
+  <tbody>
+    {% for mrc in lotes %}
+      <tr>
+        
+        <td>{{ mrc.id_lote }}</td>
+        <td>{{ mrc.year_lote }}</td>
+        <td>{{ mrc.nivel_lote }}</td>
+        <td>{{ mrc.importe_lote }}</td>
+        <td>{{ mrc.saldo_lote }}</td>
+        <td>{{ mrc.activo_lote }}</td>
+          <td>
+            <button onclick="modal_data('{% url 'edit_lote' mrc.slug %}')"  class="btn btn-outline-primary">Edit</button>
+            <button onclick="modal_data('{% url 'del_lote' mrc.slug %}')"  class="btn btn-outline-danger">Eliminar</button>
+            
+            <a class="btn btn-block btn-outline-light " href="{% url 'reclamos_lotes_list' mrc.slug  %}" title="Listar reclamos lote">Reclamo</a>
+            <a class="btn btn-block btn-outline-success " href="{% url 'generar_pago' mrc.slug user %}" title="Cerrar lote Pagdo">Pago Generado</a>
+          </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+</div>
+<div class="modal fade" id="data" role="dialog">
+
+
+</div>
+
+{% endblock %}
+{% block codigo %}
+<script>
+  $(document).ready(function () {
+            //#users es el id de la tabla
+            $('#lotes').removeAttr('width').DataTable( {
+              destroy: true,
+              dom: '<"wrapper"flitp>',
+              buttons: [
+               
+                    {
+                      extend: 'excelHtml5',
+                      text: '<i class="far fa-file-excel mr-2 btn btn-success btn-sm"></i>',
+                    },
+                    {
+                    extend: 'pdfHtml5',
+                    text: '<i class="far fa-file-pdf mr-2 btn btn-danger btn-sm"></i>',
+                    
+                    }
+              ],
+              columnDefs : [
+                
+                { "width": "8%", "targets": 0, "className": 'dt-center' },
+                { "width": "8%", "targets": 1, "className": 'dt-center' },
+                { "width": "8%", "targets": 2, "className": 'dt-center' },
+                { "width": "10%", "targets": 3, "className": 'dt-center',
+                 render: $.fn.dataTable.render.number( ',', '.', 2, '$' ) },
+                { "width": "10%", "targets": 4, "className": 'dt-center',
+                 render: $.fn.dataTable.render.number( ',', '.', 2, '$' ) },
+                { "width": "8%", "targets": 5, "className": 'dt-center' },
+                { "width": "38%", "targets": 6, "className": 'dt-center' },
+                
+                
+               
+              ],
+                pageLength: 5,
+                fixedHeader: {
+                    header: true,
+                    footer: true
+                },
+                lengthMenu: [[5,10,20,-1],[5,10,20,'Todos']],
+                language: {
+                    zeroRecords: 'No se encontraron Registros',
+                    search:  'Buscar',
+                    lengthMenu:     " _MENU_ ",
+                    info: "REG: _START_ - _END_ de _TOTAL_ ",
+                
+                    paginate: {
+                        first:    '«',
+                        previous: '‹',
+                        next:     '›',
+                        last:     '»'
+                    },
+                    aria: {
+                        paginate: {
+                            first:    'Primera',
+                            previous: 'Anterior',
+                            next:     'Siguiente',
+                            last:     'Ultima'
+                        }
+                    }
+                
+                
+                
+                
+                
+                }
+                
+                   
+                
+            })
+        });
+
+        //esto es del sweetalert2
+
+//esto es del sweetalert2
+
+</script>
+
+{% endblock %}

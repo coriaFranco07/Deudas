@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}   
+{% block contenido %}
+
+
+    <div class="portada">
+        <div>
+            {% for message in messages %}
+                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                        <div class="flex-column">
+                            <h6 class="alert alert-danger" role="alert">{{ message }}</h6>
+                        </div>
+                        
+                    {% endif %}
+                    {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                        <h6 class="alert alert-success" role="alert">{{ message }}</h6>
+                    {% endif %}
+                {% endfor %}
+        </div>
+        <img id="portada" src="{% static 'img/foto1.jpg' %}"  alt="">
+      
+        
+        <br><br><br><br><br><br><br><br><br><br>
+        <div class="presentacion-container aparecer">
+            <p class="presentacion1">SISTEMA DE REGISTRACIÓN DE DEUDAS</p>
+            
+        </div>
+
+        <div class="presentacion-container aparecer2">
+            <p class="presentacion2">GENERADOR REGISTRO ÚNICO DE PAGO</p>
+            
+        </div>
+       
+
+    </div>
+{% endblock %}

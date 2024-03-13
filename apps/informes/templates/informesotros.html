@@ -1,0 +1,393 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block contenido %}
+
+<div class="container">
+    <div class="m-3">
+
+          <div class="text-center dropup-center display-6 fw-bold opacity-50 fst-italic">REGISTRO UNICO DE PAGO</div>
+          <div class="col-10 m-5 text-lg-center">
+              {% if messages %}
+
+                
+                  {% for message in messages %}
+                      {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                          <h6 {% if message.tags %}
+                          class="alert alert-danger alert-{{ message.tags }}"{% endif %} role="alert">{{ message }}</h6>
+                      {% endif %}
+                      {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                          <h6{% if message.tags %} class="bg-success text-white text-center alert alert-{{ message.tags }}"{% endif %}>{{ message }}</h6>
+                      {% endif %}
+                      
+                  {% endfor %}
+              
+              {% endif %}
+          
+          </div>
+    
+    
+    </div>
+  
+  
+ <div class="div_separador">
+    Registros por página
+ </div>
+  <table id="lotes" class="table table-striped dt-responsive nowrap m-2 " style="width:100%" >
+  <thead>
+      <tr class="bg-primary text-white opacity-50" >
+          
+          <th scope="col">ORDEN</th>
+          <th scope="col">REC.</th>
+          <th scope="col">EXPTE. RECLAMO</th>
+          <th scope="col">LEGAJO</th>
+          <th scope="col">TIPO</th>
+          <th scope="col">DESDE</th>
+          <th scope="col">HASTA</th>
+          <th scope="col">NORMA REC.</th>
+          <th scope="col">FEC. ORDEN</th>
+          <th scope="col">FEC. PRIOR.</th>
+          <th scope="col">MOV. PRIOR.</th>
+          <th scope="col">GDE. PRIOR.</th>
+          <th scope="col">NORMA PRIOR.</th>
+          <th scope="col">MONTO NETO</th>
+          <th scope="col">MONTO TOTAL</th>
+          <th scope="col">FEC. MONTO</th>
+          
+ 
+          
+          
+      </tr>
+  </thead>
+  <tbody>
+    {% for mrc in reclamos %}
+      <tr>
+        
+        <td>{{ mrc.prioridad_reclamos.orden }}</td>
+        <td>{{ mrc.id_rec }}</td>
+        <td>{{ mrc.gde_mov }}</td>
+        <td>{{ mrc.id_legajo }}</td>
+        <td>{{ mrc.id_tipo_rec.dsc_tipo_rec }}</td>
+        <td>{{ mrc.fch_dsd_rec|date:'d-m-Y' }}</td>
+        <td>{{ mrc.fch_hst_rec|date:'d-m-Y' }}</td>
+        <td>{{ mrc.norma_legal_rec }}</td>
+        <td>{{ mrc.prioridad_reclamos.fch_orden|date:'d-m-Y' }}</td>
+        <td>{{ mrc.prioridad_reclamos.id_mov.fch_std_mov|date:'d-m-Y' }}</td>
+        <td>{{ mrc.prioridad_reclamos.id_mov.id_std_mov.dsc_std_mov }}</td>
+        <td>{{ mrc.prioridad_reclamos.id_mov.gde_mov }}</td>
+        <td>{{ mrc.prioridad_reclamos.norma_legal_prior }}</td>
+
+        <td>{{ mrc.deudas_reclamos.neto }}</td>
+        <td>{{ mrc.deudas_reclamos.total }}</td>
+        <td>{{ mrc.deudas_reclamos.fch_calculo|date:'d-m-Y' }}</td>
+        
+        
+          
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+</div>
+<div class="modal fade" id="data" role="dialog">
+
+
+</div>
+
+{% endblock %}
+{% block codigo %}
+<script>
+  $(document).ready(function () {
+            //#users es el id de la tabla
+            $('#lotes').removeAttr('width').DataTable( {
+              deferRender: true,
+              
+              dom: 'fBlitp',
+              buttons: [
+                
+
+              
+          
+
+                    {
+                    extend: 'excelHtml5',
+                    text: '<i class="far fa-file-excel mr-2 btn btn-success btn-sm"></i>',
+                    title: 'REGISTRO UNICO DE PAGO',
+                      
+                      
+                    exportOptions: {
+                          columns: [0,1, 2, 3, 4, 5,6,7,8,9,10,11,12,13,14,15],
+                          excelStyles: [                      // Add an excelStyles definition
+                              {                 
+                                template: 'cyan_medium',
+                              },
+                             
+                              {
+                                 // cells: ['A','B','C'],  // Use Smart References (s) to target the header row (h) 
+                                                 
+                                  style: {                    // The style definition
+                                      font: {                 // Style the font
+                                          name: 'Arial',
+                                          size: '8',           // Size 14
+                                          b: false,
+                                          i:true,
+                                                    // Turn off the default bolding of the header row
+                                          
+                                      },
+                                      
+                                      alignment: {
+                                        vertical: "center",
+                                        horizontal: "center",
+                                        wrapText: false,
+                                     },
+                                    
+ 
+                                  },
+                              },
+                              {
+                                  cells: 'sh',  // Use Smart References (s) to target the header row (h) 
+                                                 
+                                  style: {                    // The style definition
+                                      font: {                 // Style the font
+                                          name: 'Arial',
+                                          size: '10',           // Size 14
+                                          b: true,
+                                          color: 'FFFFFF',           // Turn off the default bolding of the header row
+                                          
+                                      },
+                                      fill: {                 // Style the cell fill
+                                          pattern: {          // Add a pattern (default is solid)
+                                              color: '1C3144', // Define the fill color
+                                              
+                                              
+                                          }
+                                      },
+                                      alignment: {
+                                        vertical: "center",
+                                        horizontal: "center",
+                                        wrapText: false,
+                                     },
+ 
+                                  },
+                              },
+                           
+                              {
+                                  cells: 'st',  // Use Smart References (s) to target the header row (h) 
+                                                 
+                                  style: {                    // The style definition
+                                      font: {                 // Style the font
+                                          name: 'Arial',
+                                          size: '20',           // Size 14
+                                          b: true,
+                                          color: 'FFFFFF',           // Turn off the default bolding of the header row
+                                          
+                                      },
+                                      fill: {                 // Style the cell fill
+                                          pattern: {          // Add a pattern (default is solid)
+                                              color: '1C3144', // Define the fill color
+                                              
+                                              
+                                          }
+                                      },
+                                      alignment: {
+                                        vertical: "center",
+                                        horizontal: "center",
+                                        wrapText: false,
+                                     },
+ 
+                                  },
+                              },
+                           
+                           
+                          {
+                            cells: ['sA'],  //condicion para las filas de la columna A
+                            
+                            style:{
+                              font:{
+                                name: 'Arial',
+                                size: '8',           // Size 14
+                                b: true,
+                                
+                                
+                              },
+                              
+                            },
+                            fill: {                 // Style the cell fill
+                                     pattern: {          // Add a pattern (default is solid)
+                                        color: '1C3144', // Define the fill color
+                                              
+                                              
+                                     }
+                                   },
+                          },
+                        ],      
+                      
+
+
+                    },  
+                    
+                    },
+                    {
+                    extend: 'pdfHtml5',
+                    orientation: 'landscape',
+                    pageSize: 'LEGAL',
+                    text: '<i class="far fa-file-pdf mr-2 btn btn-danger btn-sm"></i>',
+                    title: 'REGISTRO UNICO DE PAGO',
+                      
+                      
+                      exportOptions: {
+                            columns: [0,1, 2, 3, 4, 5,6,7,8,9,10,11,12,13,14,15],
+                            pageStyle: {
+                                sheetPr: {
+                                    pageSetUpPr: {
+                                        fitToPage: 1            // Fit the printing to the page
+                                    } 
+                                },
+                                printOptions: {
+                                    horizontalCentered: true,
+                                    verticalCentered: true,
+                                },
+                                pageSetup: {
+                                    orientation: "landscape",   // Orientation
+                                    paperSize: "1",             // Paper size (1 = Letter, 9 = A4)
+                                    fitToWidth: "100",            // Fit to page width
+                                    fitToHeight: "0",           // Fit to page height
+                                },
+                                pageMargins: {
+                                    left: "0.1",
+                                    right: "0.1",
+                                    top: "0.4",
+                                    bottom: "0.4",
+                                    header: "2",
+                                    footer: "2",
+                                },
+                                repeatHeading: true,    // Repeat the heading row at the top of each page
+                                repeatCol: 'A:A',       // Repeat column A (for pages wider than a single printed page)
+                            },
+                            
+                            
+                            excelStyles: [                      // Add an excelStyles definition
+                                {                 
+                                  template: 'cyan_medium',
+                                 
+                                },
+                                
+                                {
+
+                                   // cells: ['A','B','C'],  // Use Smart References (s) to target the header row (h) 
+                                                   
+                                    style: {                    // The style definition
+                                        font: {                 // Style the font
+                                            name: 'Arial',
+                                            size: '4',           // Size 14
+                                            b: false,
+                                            i:true,
+                                                      // Turn off the default bolding of the header row
+                                            
+                                        },
+                                        
+                                        alignment: {
+                                          vertical: "center",
+                                          horizontal: "center",
+                                          wrapText: false,
+                                       },
+                                       title: {
+                                          alignment: 'center',
+                                          fontSize: '14',
+                                      },
+
+                                      
+                                      
+   
+                                    },
+                                },
+                               
+                            ],      
+                           
+  
+  
+  
+                      },  
+                      
+                    
+                    },
+               /*      {
+                        popoverTitle: 'Colum. Visibles',
+                        extend: 'colvis',
+                        collectionLayout: 'tree-column',
+                        text: 'Columnas Visibles',
+                        columns: ':eq(1),:eq(2),:eq(3),:eq(4),:eq(5),:eq(6),:eq(7),:eq(8),:eq(9),:eq(10),:eq(16),:eq(17),:eq(18),:eq(19),:eq(20),:eq(21),:eq(22)'
+                    }, */
+              ],
+              
+              
+             
+              columnDefs : [
+                
+                { "width": "5%", "targets": 0, "className": 'dt-center' },
+                { "width": "5%", "targets": 1, "className": 'dt-center' },
+                { "width": "5%", "targets": 2, "className": 'dt-center' },
+                { "width": "5%", "targets": 3, "className": 'dt-center' },
+                { "width": "5%", "targets": 4, "className": 'dt-center' },
+                { "width": "5%", "targets": 5, "className": 'dt-center' },
+                { "width": "5%", "targets": 6, "className": 'dt-center' },
+                { "width": "5%", "targets": 7, "className": 'dt-center' },
+                { "width": "5%", "targets": 8, "className": 'dt-center' },
+                { "width": "5%", "targets": 9, "className": 'dt-center' },
+                { "width": "5%", "targets": 10, "className": 'dt-center' },
+                { "width": "5%", "targets": 11, "className": 'dt-center'},
+                { "width": "5%", "targets": 12, "className": 'dt-center'},
+               
+                { "width": "5%", "targets": 13, "className": 'dt-center' },
+                { "width": "5%", "targets": 14, "className": 'dt-center' },
+                { "width": "5%", "targets": 15, "className": 'dt-center' },
+
+                { "render": $.fn.dataTable.render.number( ',', '.', 2, '$','' ), "targets":[13,14]},
+                
+                
+               
+              ],
+                pageLength: 20,
+                fixedHeader: {
+                    header: true,
+                    footer: true
+                },
+                lengthMenu: [[5,10,20,-1],[5,10,20,'Todos']],
+                language: {
+                    zeroRecords: 'No se encontraron Registros',
+                    search:  'Buscar',
+                    lengthMenu:     " _MENU_ ",
+                    info: "REG: _START_ - _END_ de _TOTAL_ ",
+                
+                    paginate: {
+                        first:    '«',
+                        previous: '‹',
+                        next:     '›',
+                        last:     '»'
+                    },
+                    aria: {
+                        paginate: {
+                            first:    'Primera',
+                            previous: 'Anterior',
+                            next:     'Siguiente',
+                            last:     'Ultima'
+                        }
+                    }
+                
+                
+                
+                
+                
+                }
+                
+                   
+                
+            })
+        });
+
+        //esto es del sweetalert2
+
+//esto es del sweetalert2
+
+</script>
+<script src ="{% static '/main.js' %}" ></script>
+{% endblock %}

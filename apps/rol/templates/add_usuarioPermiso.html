@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block contenido %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   
+
+    <title>Agregar Permisos a Usuario</title>
+</head>
+<body>
+    <div class="container text-white"><br>
+        <div class="my-3 d-flex align-items-center"><br><br><br>
+            <div style="padding: 5px; border-radius: 5px;">
+                <a href="{% url 'rolesUsuario' user.id %}" class="btn btn-dark" style="padding: 0px;">
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAAXNSR0IArs4c6QAAAUBJREFUWEft1k1OwzAQBeD3ZPtksIQrsCiwgEvQcgVEEQghDgG7IvVGHCCpBrVKiis18U9sE6Rk2zTz5c1oHGJkF0fmwQRydWRKKGtCUlUnNObLVSTk9+iWSV2/ALgGeUel7kOK9t0bBZK6fgRwaz34jFp/pkAFg/bJ/FZ/otY2bpArCJQbs30Tb1AJjBdIRIjN5nk3wJnaZPe4N6EG8w7gogSmN6EOzBu1vhw0tY4/H02oCwOlrkhKUVCDeQUwswp/Q+QBQGrMmsasO2eoI5l8gYgsaMz8/4C20lG1rI1uVEP916iYxZh1FznPstLb2gmyBr3IeeYF2s9V+5WY8ZANAu3SyowKBjWoJYAba8OeU+uPFCs9CnSQFDmnUosUGK8PtL5CUlWnNGaVCjMYlBLSPiu6ZTkwU0I+qU4tc6X0A9D0oSUlvNfRAAAAAElFTkSuQmCC"/>
+                </a>
+            </div>
+            <h2>. </h2>
+            <h2 class=" ml-3" ">Agregar Permisos a Usuario "{{ user.username }}"</h2>
+        </div>
+        
+        <div class="div_separador">
+            Registros por página
+         </div>
+        <table class="table table-dark table-striped dt-responsive nowrap m-2  text-white" id="permisos">
+            <thead>
+                <tr>
+                    <th>Permiso</th>
+                    <th>ASIGNADO / NO ASIGNADO</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                {% for permission in all_permissions %}
+                <tr>
+                    <td>{{ permission.name }}</td>
+                    <td>
+                        {% if permission in user_permissions %}
+                            <!-- Permiso ya asignado al usuario -->
+                            <span class="badge bg-success">Asignado</span>
+                        {% else %}
+                            <!-- Permiso no asignado al usuario -->
+                            <span class="badge bg-danger">No asignado</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'agregarPermiso' user.id permission.id %}" class="btn btn-warning{% if permission in user_permissions %} disabled bg-secondary {% endif %}">Asignar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                
+            </tbody>
+            
+        </table>
+    </div>
+    
+</body>
+</html>
+{% endblock %}
+
+{% block codigo %}
+<script>
+     $(document).ready(function () {
+            //#users es el id de la tabla
+            $('#permisos').removeAttr('width').DataTable( {
+              destroy: true,
+              dom: '<Bflitp>',
+              buttons: [
+               
+                    {
+                      extend: 'excelHtml5',
+                      text: '<i class="far fa-file-excel mr-2 btn btn-success btn-sm"></i>',
+                    },
+                    {
+                    extend: 'pdfHtml5',
+                    text: '<i class="far fa-file-pdf mr-2 btn btn-danger btn-sm"></i>',
+                    
+                    }
+              ],
+              columnDefs : [
+                
+                { "width": "40%", "targets": 0, "className": 'dt-head-center' },
+                
+                { "width": "40%", "targets": 1, "className": 'dt-center' },
+                { "width": "20%", "targets": 2, "className": 'dt-center' },
+                
+               
+              ],
+                pageLength: 5,
+                fixedHeader: {
+                    header: true,
+                    footer: true
+                },
+                lengthMenu: [[5,10,20,-1],[5,10,20,'Todos']],
+                language: {
+                    zeroRecords: 'No se encontraron Registros',
+                    search:  'Buscar',
+                    lengthMenu:     " _MENU_ ",
+                    info: "REG: _START_ - _END_ de _TOTAL_ ",
+                
+                    paginate: {
+                        first:    '«',
+                        previous: '‹',
+                        next:     '›',
+                        last:     '»'
+                    },
+                    aria: {
+                        paginate: {
+                            first:    'Primera',
+                            previous: 'Anterior',
+                            next:     'Siguiente',
+                            last:     'Ultima'
+                        }
+                    }
+                
+                
+                
+                
+                
+                }
+                
+                   
+                
+            })
+        });
+
+    
+  //esto es del sweetalert2
+  
+  </script>
+  <script src ="{% static 'js/main.js' %}" ></script>
+{% endblock %}
+
+

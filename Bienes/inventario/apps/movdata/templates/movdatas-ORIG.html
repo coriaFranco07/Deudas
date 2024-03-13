@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block contenido %}
+
+{% if messages %}
+<div class="card-body">
+<ul class="messages">
+    {% for message in messages %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+            <li{% if message.tags %} class="bg-danger text-white alert alert-{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endif %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+            <li{% if message.tags %} class="bg-success text-white alert alert-{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endif %}
+        
+    {% endfor %}
+</ul>
+</div>
+{% endif %}
+
+<a href="{% url 'add_movdata' %}">Nueva</a>
+  <h1>PROPIOS</h1>
+  <ul>
+    {% for mov in origen %}
+     <li>
+        
+        {{mov}} <a href="{% url 'transferir' mov.bien_mov.slug %}">Transferir</a> 
+     </li>
+     {% empty %}
+     <h4>No existen bienes inventariables</h4>
+    {% endfor %}
+
+  </ul>
+  <hr>
+  <hr>
+  <h1>LOS TENGO Y SON DE OTROS</h1>
+  <ul>
+    {% for mov in destino %}
+     <li>
+        {{mov}} <a href="{% url 'adquirir' mov.slug %}">Adquirir</a>
+     </li>
+     {% empty %}
+         <h4>No existen bienes inventariables</h4>
+    {% endfor %}
+
+  </ul>
+
+  <hr>
+  <hr>
+  <h1>SON MIOS Y LOS PRESTE</h1>
+  <ul>
+    {% for mov in origenes %}
+     <li>
+        {{mov}} <a href="{% url 'recuperar' mov.slug %}">Recuperar</a>
+     </li>
+     {% empty %}
+         <h4>No existen bienes inventariables</h4>
+    {% endfor %}
+
+  </ul>
+
+  <hr>
+  <hr>
+  <h1>SIN INVENTARIO</h1>
+  <ul>
+    {% for mov in  sininventario %}
+     <li>
+        {{mov}} <a href="{% url 'inventariar' mov.bien_mov.slug %}">Inventariar</a>
+     </li>
+     {% empty %}
+         <h4>No existen bienes inventariables</h4>
+    
+    {% endfor %}
+
+  </ul>
+{% endblock %}

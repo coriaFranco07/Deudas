@@ -1,0 +1,236 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block contenido %}
+
+<div class="container">
+    <div class="m-3">
+
+          <div class="text-center dropup-center display-6 fw-bold opacity-50 fst-italic">LISTADO CLASES DE BIENES</div>
+          <div class="col-10 m-5 text-lg-center">
+              {% if messages %}
+
+                
+                  {% for message in messages %}
+                      {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                          <h6 {% if message.tags %}
+                          class="alert alert-danger alert-{{ message.tags }} opacity-50 "{% endif %} role="alert">{{ message }}</h6>
+                      {% endif %}
+                      {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                          <h6{% if message.tags %} class="bg-success text-white text-center alert alert-{{ message.tags }} opacity-50"{% endif %}>{{ message }}</h6>
+                      {% endif %}
+                      
+                  {% endfor %}
+              
+              {% endif %}
+          
+          </div>
+    
+    
+    </div>
+  
+  <div class="mt-4">
+    <button onclick="modal_data('{% url 'add_clase' %}')" class="btn btn-block btn-primary opacity-75 btn-xs">Agregar</button>
+  </div>
+ <div class="div_separador">
+    Registros por página
+ </div>
+  <table id="clases" class="table table-striped dt-responsive nowrap m-2  " style="width:100%" >
+  <thead>
+      <tr class="bg-primary text-white opacity-50" >
+          
+          <th scope="col">DESCRIPCION CLASE</th>
+          <th scope="col">ACCIONES</th>
+          
+      </tr>
+  </thead>
+  <tbody>
+    {% for mrc in clases %}
+      <tr>
+        
+        <td>{{ mrc.dsc_clase }}</td>
+     
+          <td>
+            <button onclick="modal_data('{% url 'edit_clase' mrc.slug %}')"  class="btn btn-outline-primary">Edit</button>
+              <button onclick="modal_data('{% url 'del_clase' mrc.slug %}')"  class="btn btn-outline-danger">Eliminar</button>
+          </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+</div>
+<div class="modal fade" id="data" role="dialog">
+
+
+</div>
+
+{% endblock %}
+{% block codigo %}
+<script>
+  $(document).ready(function () {
+            //#users es el id de la tabla
+            $('#clases').removeAttr('width').DataTable( {
+              dom: '<"wrapper"Bflitp>',
+              buttons: [
+               
+                    {
+                      extend: 'excelHtml5',
+                      text: '<i class="far fa-file-excel mr-2 btn btn-success btn-sm"></i>',
+                      title: 'CONTROL DE TIPOS DE CLASES',
+
+                      exportOptions: {
+                          columns: [0],
+                          excelStyles: [                      // Add an excelStyles definition
+                              {                 
+                                template: 'cyan_medium',
+                              },
+                             
+                              {
+                                 
+                                  style: {                   
+                                      font: {                
+                                          name: 'Arial',
+                                          size: '12',         
+                                          b: false,
+                                          i:true,
+                                         
+                                          
+                                      },
+                                      
+                                      alignment: {
+                                        vertical: "center",
+                                        horizontal: "center",
+                                        wrapText: false,
+                                     },
+                                    
+ 
+                                  },
+                              },
+                              {
+                                  cells: 'sh',  // Use Smart References (s) to target the header row (h) 
+                                                 
+                                  style: {                    // The style definition
+                                      font: {                 // Style the font
+                                          name: 'Arial',
+                                          size: '12',           // Size 14
+                                          b: true,
+                                          color: 'FFFFFF',           // Turn off the default bolding of the header row
+                                          
+                                      },
+                                      fill: {                 // Style the cell fill
+                                          pattern: {          // Add a pattern (default is solid)
+                                              color: '1C3144', // Define the fill color
+                                              
+                                              
+                                          }
+                                      },
+                                      alignment: {
+                                        vertical: "center",
+                                        horizontal: "center",
+                                        wrapText: false,
+                                     },
+ 
+                                  },
+                              },
+                           
+                           
+                          {
+                            cells: ['sB','sC'],  //condicion para las filas de la columna D
+                            condition:{
+                              type: 'cellIs',
+                              operator: 'notEqual',
+                              //lessThanOrEqual  menor o igual
+                             /*  between	Value is between the two numbers in the formula array
+                              equal	Value is equal to the number in the formula
+                              greaterThan	Value is greater than the number in the formula
+                              greaterThanOrEqual	Value is greater than or equal to the number in the formula
+                              lessThan	Value is less than the number in the formula
+                              lessThanOrEqual	Value is less than or equal to the number in the formula
+                              notBetween	Value is NOT between the two numbers in the formula array
+                              notEqual	Value is NOT equal to the number in the formula */
+
+                              formula: [0]
+                            },
+                            style:{
+                              font:{
+                                name: 'Arial',
+                                size: '14',           // Size 14
+                                b: true,
+                                color: 'FF0000',
+                                
+                              },
+                              fill: {                 // Style the cell fill
+                                  pattern: {          // Add a pattern (default is solid)
+                                    bgcolor: 'blue', // Define the fill color
+                                    alignment: 'center',
+                                              
+                                  }
+                              },
+                            },
+                          },
+                        ],      
+                      
+
+
+
+                    },  
+                    
+                    },
+                    {
+                    extend: 'pdfHtml5',
+                    text: '<i class="far fa-file-pdf mr-2 btn btn-danger btn-sm"></i>',
+                    
+                    }
+              ],
+              columnDefs : [
+                
+                { "width": "50%", "targets": 0, "className": 'dt-head-center' },
+                { "width": "10%", "targets": 1, "className": 'dt-center' },
+                
+               
+              ],
+                pageLength: 5,
+                fixedHeader: {
+                    header: true,
+                    footer: true
+                },
+                lengthMenu: [[5,10,20,-1],[5,10,20,'Todos']],
+                language: {
+                    zeroRecords: 'No se encontraron Registros',
+                    search:  'Buscar',
+                    lengthMenu:     " _MENU_ ",
+                    info: "REG: _START_ - _END_ de _TOTAL_ ",
+                
+                    paginate: {
+                        first:    '«',
+                        previous: '‹',
+                        next:     '›',
+                        last:     '»'
+                    },
+                    aria: {
+                        paginate: {
+                            first:    'Primera',
+                            previous: 'Anterior',
+                            next:     'Siguiente',
+                            last:     'Ultima'
+                        }
+                    }
+                
+                
+                
+                
+                
+                }
+                
+                   
+                
+            })
+        });
+
+        //esto es del sweetalert2
+
+//esto es del sweetalert2
+
+</script>
+<script src ="{% static 'admin/js/general/main.js' %}" ></script>
+{% endblock %}

@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block contenido %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Permisos del Usuario</title>
+</head>
+
+<body>
+
+    <div class="container mt-5"><br>
+
+        <div class="m-3">
+            
+            <div class="text-center dropup-center display-6 fw-bold opacity-50 fst-italic">Permisos del Usuario: {{ selected_user.username }}</div>
+            <div class="col-10 m-5 text-lg-center">
+                {% if messages %}
+  
+                  
+                    {% for message in messages %}
+                        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                            <h6 {% if message.tags %}
+                            class="alert alert-danger alert-{{ message.tags }}"{% endif %} role="alert">{{ message }}</h6>
+                        {% endif %}
+                        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                            <h6{% if message.tags %} class="bg-success text-white text-center alert alert-{{ message.tags }}"{% endif %}>{{ message }}</h6>
+                        {% endif %}
+                        
+                    {% endfor %}
+                
+                {% endif %}
+            
+            </div>
+      
+        </div>
+
+
+        <div style="padding: 5px; display: inline-block; border-radius: 5px;">
+            <a href="{% url 'roles' %}">
+                <button class="btn btn-dark" style="padding: 0px;">
+                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAAXNSR0IArs4c6QAAAUBJREFUWEft1k1OwzAQBeD3ZPtksIQrsCiwgEvQcgVEEQghDgG7IvVGHCCpBrVKiis18U9sE6Rk2zTz5c1oHGJkF0fmwQRydWRKKGtCUlUnNObLVSTk9+iWSV2/ALgGeUel7kOK9t0bBZK6fgRwaz34jFp/pkAFg/bJ/FZ/otY2bpArCJQbs30Tb1AJjBdIRIjN5nk3wJnaZPe4N6EG8w7gogSmN6EOzBu1vhw0tY4/H02oCwOlrkhKUVCDeQUwswp/Q+QBQGrMmsasO2eoI5l8gYgsaMz8/4C20lG1rI1uVEP916iYxZh1FznPstLb2gmyBr3IeeYF2s9V+5WY8ZANAu3SyowKBjWoJYAba8OeU+uPFCs9CnSQFDmnUosUGK8PtL5CUlWnNGaVCjMYlBLSPiu6ZTkwU0I+qU4tc6X0A9D0oSUlvNfRAAAAAElFTkSuQmCC"/>
+                </button>
+            </a>
+        </div>
+        <a href="{% url 'rolesUsuarioAdd' selected_user.id  %}" class="btn btn-info">Agregar Permiso</a><br><br>
+
+        <div class="div_separador">
+            Registros por página
+         </div>
+
+        {% if user_permissions %}
+            <table id="controles"  class="table table-dark table-striped dt-responsive nowrap m-2 " style="width:100%">
+                <thead>
+                    <tr class="bg-primary text-white opacity-50" >
+                        <th>Permiso</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for permission in user_permissions %}
+                        <tr>
+                            <td>{{ permission.name }}</td>
+                            <td>
+                                <a href="{% url 'rolesUsuarioDelet' selected_user.id permission.id %}" class="btn btn-danger">Eliminar Permiso</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <!-- Mostrar el mensaje cuando el usuario no tiene ningún permiso -->
+            <h3 class="no-permissions-message" style="color: red;">Por ahora este usuario no tiene ningún permiso asignado.</h3>
+        {% endif %}
+    </div> 
+    
+   
+</body>
+</html>
+{% endblock %}
+
+{% block codigo %}
+
+
+<script>
+    $(document).ready(function () {
+            //#users es el id de la tabla
+            $('#controles').removeAttr('width').DataTable( {
+              destroy: true,
+              dom: '<Bflitp>',
+              buttons: [
+               
+                    {
+                      extend: 'excelHtml5',
+                      text: '<i class="far fa-file-excel mr-2 btn btn-success btn-sm"></i>',
+                    },
+                    {
+                    extend: 'pdfHtml5',
+                    text: '<i class="far fa-file-pdf mr-2 btn btn-danger btn-sm"></i>',
+                    
+                    }
+              ],
+              columnDefs : [
+                
+                { "width": "40%", "targets": 0, "className": 'dt-head-center' },
+                
+                { "width": "40%", "targets": 1, "className": 'dt-center' },
+                
+                
+               
+              ],
+                pageLength: 5,
+                fixedHeader: {
+                    header: true,
+                    footer: true
+                },
+                lengthMenu: [[5,10,20,-1],[5,10,20,'Todos']],
+                language: {
+                    zeroRecords: 'No se encontraron Registros',
+                    search:  'Buscar',
+                    lengthMenu:     " _MENU_ ",
+                    info: "REG: _START_ - _END_ de _TOTAL_ ",
+                
+                    paginate: {
+                        first:    '«',
+                        previous: '‹',
+                        next:     '›',
+                        last:     '»'
+                    },
+                    aria: {
+                        paginate: {
+                            first:    'Primera',
+                            previous: 'Anterior',
+                            next:     'Siguiente',
+                            last:     'Ultima'
+                        }
+                    }
+                
+                
+                
+                
+                
+                }
+                
+                   
+                
+            })
+        });
+
+    
+//esto es del sweetalert2
+
+</script>
+<script src ="{% static '/main.js' %}" ></script>
+{% endblock %}

@@ -1,0 +1,391 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block contenido %}
+
+<div class="container">
+    <div class="m-3">
+
+          <div class="text-center dropup-center display-6 fw-bold opacity-50 fst-italic">HISTORIAL DE MOVIMIENTOS</div>
+          <div class="col-10 m-5 text-lg-center">
+              {% if messages %}
+
+                
+                  {% for message in messages %}
+                      {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                          <h6 {% if message.tags %}
+                          class="alert alert-danger alert-{{ message.tags }}"{% endif %} role="alert">{{ message }}</h6>
+                      {% endif %}
+                      {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                          <h6{% if message.tags %} class="bg-success text-white text-center alert alert-{{ message.tags }}"{% endif %}>{{ message }}</h6>
+                      {% endif %}
+                      
+                  {% endfor %}
+              
+              {% endif %}
+          
+          </div>
+    
+    
+    </div>
+    <div class="text-center format_head">
+      
+      <p id="textotitle">{{ reclamo }}</p>
+    
+    </div>
+     
+  
+  <div class="mt-4">
+    <div style="padding: 5px; display: inline-block; border-radius: 5px;">
+      <a href="{% url 'list_reclamos' %}">
+          <button class="btn btn-dark" style="padding: 0px;">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAAXNSR0IArs4c6QAAAUBJREFUWEft1k1OwzAQBeD3ZPtksIQrsCiwgEvQcgVEEQghDgG7IvVGHCCpBrVKiis18U9sE6Rk2zTz5c1oHGJkF0fmwQRydWRKKGtCUlUnNObLVSTk9+iWSV2/ALgGeUel7kOK9t0bBZK6fgRwaz34jFp/pkAFg/bJ/FZ/otY2bpArCJQbs30Tb1AJjBdIRIjN5nk3wJnaZPe4N6EG8w7gogSmN6EOzBu1vhw0tY4/H02oCwOlrkhKUVCDeQUwswp/Q+QBQGrMmsasO2eoI5l8gYgsaMz8/4C20lG1rI1uVEP916iYxZh1FznPstLb2gmyBr3IeeYF2s9V+5WY8ZANAu3SyowKBjWoJYAba8OeU+uPFCs9CnSQFDmnUosUGK8PtL5CUlWnNGaVCjMYlBLSPiu6ZTkwU0I+qU4tc6X0A9D0oSUlvNfRAAAAAElFTkSuQmCC"/>
+          </button>
+      </a>
+    </div>
+    <button onclick="modal_data('{% url 'add_mov_rec' reclamo.slug %}')" class="btn btn-block btn-primary ">Agregar</button>
+  </div>
+ <div class="div_separador">
+    Registros por página
+ </div>
+  <table id="movimientos" class="table table-dark table-striped dt-responsive nowrap m-2 " style="width:100%" >
+  <thead>
+      <tr class="bg-primary text-white opacity-50" >
+        
+        <th scope="col">Fec.Registro</th>  
+        
+          <th scope="col">Tipo Movimiento</th>
+          <th scope="col">GDE Detalle</th>
+          <th scope="col">Observaciones</th>
+          <th scope="col">Fec.Exp.</th>
+          <th scope="col">Fch.Vigencia</th>
+          <th scope="col">ACCIONES</th>
+          
+      </tr>
+  </thead>
+  <tbody>
+    {% for mrc in detalles %}
+      
+    <tr>
+     
+        <td>{{ mrc.fch_mov_user|date:'d-m-Y' }}</td>
+        
+        <td>{{ mrc.id_std_mov.dsc_std_mov }}</td>
+        <td>{{ mrc.gde_mov }}</td>
+        <td>{{ mrc.obs_mov }}</td>
+        <td>{{ mrc.fch_mov|date:'d-m-Y' }}</td>
+        <td>{{ mrc.fch_std_mov|date:'d-m-Y' }}</td>
+        
+     
+        <td>
+          <button onclick="modal_data('{% url 'edit_mov_rec' mrc.slug %}')"  class="btn btn-outline-primary">Edit</button>
+          <button onclick="modal_data('{% url 'edit_rec_prior' slug_prior mrc.slug %}')"  class="btn btn-outline-success" title="Establecer Prioridad">P</button>
+          <button onclick="modal_data('{% url 'del_mov_rec' mrc.slug %}')"  class="btn btn-outline-danger">Eliminar</button>
+          
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+</div>
+<div class="modal fade" id="data" role="dialog">
+
+
+</div>
+
+{% endblock %}
+{% block codigo %}
+<script>
+$(document).ready(function () {
+            //$('#movimientos').append('<caption style="caption-side: block-end">Direección Administración</caption>');
+           
+            //#users es el id de la tabla
+            $('#movimientos').removeAttr('width').DataTable( {
+              destroy: true,
+              dom: 'Bflitp',
+              buttons: [
+                    {
+                    extend: 'excelHtml5',
+                    text: '<i class="far fa-file-excel mr-2 btn btn-success btn-sm"></i>',
+                    title:   function() {
+                              var elemento=document.getElementById('textotitle');
+                              var title=elemento.innerHTML;
+                              return title;
+                           },
+                      
+                      
+                    exportOptions: {
+                      columns: [0, 1,2, 3, 4,5],
+                          excelStyles: [                      // Add an excelStyles definition
+                              {                 
+                                template: 'cyan_medium',
+                              },
+                             
+                              {
+                                 // cells: ['A','B','C'],  // Use Smart References (s) to target the header row (h) 
+                                                 
+                                  style: {                    // The style definition
+                                      font: {                 // Style the font
+                                          name: 'Arial',
+                                          size: '8',           // Size 14
+                                          b: false,
+                                          i:true,
+                                                    // Turn off the default bolding of the header row
+                                          
+                                      },
+                                      
+                                      alignment: {
+                                        vertical: "center",
+                                        horizontal: "center",
+                                        wrapText: false,
+                                     },
+                                    
+ 
+                                  },
+                              },
+                              {
+                                  cells: 'sh',  // Use Smart References (s) to target the header row (h) 
+                                                 
+                                  style: {                    // The style definition
+                                      font: {                 // Style the font
+                                          name: 'Arial',
+                                          size: '10',           // Size 14
+                                          b: true,
+                                          color: 'FFFFFF',           // Turn off the default bolding of the header row
+                                          
+                                      },
+                                      fill: {                 // Style the cell fill
+                                          pattern: {          // Add a pattern (default is solid)
+                                              color: '1C3144', // Define the fill color
+                                              
+                                              
+                                          }
+                                      },
+                                      alignment: {
+                                        vertical: "left",
+                                        horizontal: "left",
+                                        wrapText: false,
+                                     },
+ 
+                                  },
+                              },
+                           
+                              {
+                                  cells: 'st',  // Use Smart References (s) to target the header row (h) 
+                                                 
+                                  style: {                    // The style definition
+                                      font: {                 // Style the font
+                                          name: 'Arial',
+                                          size: '20',           // Size 14
+                                          b: true,
+                                          color: 'FFFFFF',           // Turn off the default bolding of the header row
+                                          
+                                      },
+                                      fill: {                 // Style the cell fill
+                                          pattern: {          // Add a pattern (default is solid)
+                                              color: '1C3144', // Define the fill color
+                                              
+                                              
+                                          }
+                                      },
+                                      alignment: {
+                                        vertical: "center",
+                                        horizontal: "center",
+                                        wrapText: false,
+                                     },
+ 
+                                  },
+                              },
+                           
+                           
+                          {
+                            cells: ['sA'],  //condicion para las filas de la columna A
+                            
+                            style:{
+                              font:{
+                                name: 'Arial',
+                                size: '8',           // Size 14
+                                b: true,
+                                
+                                
+                              },
+                              
+                            },
+                            fill: {                 // Style the cell fill
+                                     pattern: {          // Add a pattern (default is solid)
+                                        color: '1C3144', // Define the fill color
+                                              
+                                              
+                                     }
+                                   },
+                          },
+                        ],      
+                      
+
+
+                    },  
+                    
+                    },
+                    {
+                    extend: 'pdfHtml5',
+                    orientation: 'landscape',
+                    pageSize: 'LEGAL',
+                    text: '<i class="far fa-file-pdf mr-2 btn btn-danger btn-sm"></i>',
+                    title:'REGISTRO DETALLES DE RECLAMO',
+                    messageTop:   function() {
+                              var elemento=document.getElementById('textotitle');
+                              var title=elemento.innerHTML;
+                              return title;
+                           },
+                    stripHtml: false,
+                      
+                      
+                      exportOptions: {
+                            columns: [0, 1,2, 3, 4,5],
+                            pageStyle: {
+                                sheetPr: {
+                                    pageSetUpPr: {
+                                        fitToPage: 1            // Fit the printing to the page
+                                    } 
+                                },
+                                printOptions: {
+                                    horizontalCentered: true,
+                                    verticalCentered: true,
+                                },
+                                pageSetup: {
+                                    orientation: "landscape",   // Orientation
+                                    paperSize: "1",             // Paper size (1 = Letter, 9 = A4)
+                                    fitToWidth: "100",            // Fit to page width
+                                    fitToHeight: "0",           // Fit to page height
+                                },
+                                pageMargins: {
+                                    left: "0.1",
+                                    right: "0.1",
+                                    top: "0.4",
+                                    bottom: "0.4",
+                                    header: "2",
+                                    footer: "2",
+                                },
+                                repeatHeading: true,    // Repeat the heading row at the top of each page
+                                repeatCol: 'A:A',       // Repeat column A (for pages wider than a single printed page)
+                            },
+                            
+                            
+                            excelStyles: [                      // Add an excelStyles definition
+                                {                 
+                                  template: 'header_blue',
+                                  
+                                 
+                                },
+                                
+                                
+                                {
+
+                                   // cells: ['A','B','C'],  // Use Smart References (s) to target the header row (h) 
+                                                   
+                                    style: {                    // The style definition
+                                        font: {                 // Style the font
+                                            name: 'Arial',
+                                            size: '6',           // Size 14
+                                            b: false,
+                                            i:true,
+                                                      // Turn off the default bolding of the header row
+                                            
+                                        },
+                                        
+                                        alignment: {
+                                          vertical: "center",
+                                          horizontal: "center",
+                                          wrapText: false,
+                                       },
+                                        title: {
+                                          alignment: 'center',
+                                          fontSize: '16',
+                                      },
+                                      
+
+                                        
+                                         
+
+                                      
+                                      
+   
+                                    },
+                                },
+                               
+                            ],      
+                           
+  
+  
+  
+                      },  
+                      
+                    
+                    },
+               /*      {
+                        popoverTitle: 'Colum. Visibles',
+                        extend: 'colvis',
+                        collectionLayout: 'tree-column',
+                        text: 'Columnas Visibles',
+                        columns: ':eq(1),:eq(2),:eq(3),:eq(4),:eq(5),:eq(6),:eq(7),:eq(8),:eq(9),:eq(10),:eq(16),:eq(17),:eq(18),:eq(19),:eq(20),:eq(21),:eq(22)'
+                    }, */
+              ],
+              
+              columnDefs : [
+                { "width": "8%", "targets": 0, "className": 'dt-center' },
+                
+                { "width": "14%", "targets": 1, "className": 'dt-center' },
+                { "width": "30%", "targets": 2, "className": 'dt-head-center' },
+                { "width": "30%", "targets": 3, "className": 'dt-head-center' },
+                { "width": "8%", "targets": 4, "className": 'dt-center' },
+
+                { "width": "8%", "targets": 5, "className": 'dt-center' },
+                { "width": "15%", "targets": 6, "className": 'dt-center' },
+                
+               
+              ],
+                pageLength: 20,
+                fixedHeader: {
+                    header: true,
+                    footer: true
+                },
+                lengthMenu: [[5,10,20,-1],[5,10,20,'Todos']],
+                language: {
+                    zeroRecords: 'No se encontraron Registros',
+                    search:  'Buscar',
+                    lengthMenu:     " _MENU_ ",
+                    info: "REG: _START_ - _END_ de _TOTAL_ ",
+                
+                    paginate: {
+                        first:    '«',
+                        previous: '‹',
+                        next:     '›',
+                        last:     '»'
+                    },
+                    aria: {
+                        paginate: {
+                            first:    'Primera',
+                            previous: 'Anterior',
+                            next:     'Siguiente',
+                            last:     'Ultima'
+                        }
+                    }
+                
+                
+                
+                
+                
+                }
+                
+                   
+                
+            })
+        });
+
+        //esto es del sweetalert2
+
+//esto es del sweetalert2
+
+</script>
+
+{% endblock %}

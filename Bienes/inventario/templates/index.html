@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block contenido %}
+
+                {% for message in messages %}
+                {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                    <h6 {% if message.tags %}
+                    class="alert alert-danger alert-{{ message.tags }}"{% endif %} role="alert">{{ message }}</h6>
+                {% endif %}
+                {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                    <h6{% if message.tags %} class="bg-success text-white text-center alert alert-{{ message.tags }}"{% endif %}>{{ message }}</h6>
+                {% endif %}
+
+                {% endfor %}
+                <div class="container">
+                    <div class="card text-center">
+                        <h1>Inicio</h1>
+                    </div>
+                </div>
+               
+{% endblock %}

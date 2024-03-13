@@ -1,0 +1,83 @@
+
+<div class="modal-dialog modal-lg" role="document">
+  <div class="modal-content  bg-dark">
+     <div class="modal-header">
+        
+        <div class="col-auto m-2 text-lg-center" id="errores">
+          {% if messages %}
+
+            
+              {% for message in messages %}
+                  {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                      <h6 {% if message.tags %}
+                      class="alert alert-danger alert-{{ message.tags }}"{% endif %} >{{ message }}</h6>
+                  {% endif %}
+                  {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                      <h6{% if message.tags %} class="bg-success text-white text-center alert alert-{{ message.tags }}"{% endif %}>{{ message }}</h6>
+                  {% endif %}
+                  
+              {% endfor %}
+          
+          {% endif %}
+
+        </div>
+      </div>
+      
+          <div class="align-self-center">
+              <div class="m-2 text-center bg-opacity-50 text-secondary"><h4><strong >PRIORIDAD DEL RECLAMO</strong></h4></div>
+              <div class=" bg-opacity-25 text-primary text-center"><h5><strong >DATOS</strong></h5></div>
+              <div class="col-12 align-self-center shadow-lg p-3 mb-5 bg-body rounded ">
+                  <form action="{% url 'edit_rec_prior' slug_prior slug_mov %}" method="post" id="form_add" class="card card-body text-center"> 
+                    <div class="modal-body data-backdrop=true" id="modal-body">
+                                  
+                                                    
+                        <div class="col-lg-12  text-md-center text-black " id="oper_card">
+                                    {% csrf_token %}
+
+
+                                    <div class="row mt-auto">
+                                      <div class="col-lg-6">
+                                        PRIORIDAD
+                                          <div class="row-cols-sm-1 m-1 text-center" data-model-ref="id_prior">
+                                            
+                                            {{ form.id_prior }}
+                                          
+                                          </div>
+      
+                                      </div>  
+                                      <div class="col-lg-6">
+                                        NORMA LEGAL 
+                                          <div class="row-cols-sm-1 m-1 text-center" >
+                                            
+                                            {{ form.norma_legal_prior }}
+                                          
+                                          </div>
+      
+                                      </div>
+                                  </div>
+
+
+
+                                   
+                                  </div>
+                                    
+        
+                                    
+                                    
+                          </div>          
+                                                            
+                                                        
+                                              
+                            </div>
+                            <div class="modal-footer">
+                                <button class="close btn btn-success bg-opacity-75" type="button" onclick="modal_cerrar()">Cancelar</button>
+                                <button id="btn_add" type="button" onclick="registrar()" class="btn btn-primary bg-opacity-75">Modificar</button>
+                            </div>
+                  </form>
+              </div>
+              
+            
+          </div>
+      
+  </div>
+</div>

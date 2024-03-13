@@ -1,0 +1,38 @@
+<div id="modal_form" class="modal-dialog modal-lg" role="document" style="z-index: 1900">
+    <div class="modal-content">
+       <div class="modal-header">
+        <div class="align-baseline" id="errores">
+            {% if messages %}
+  
+              
+                {% for message in messages %}
+                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                        <h6 {% if message.tags %}
+                        class="alert alert-danger alert-{{ message.tags }}"{% endif %} >{{ message }}</h6>
+                    {% endif %}
+                    {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                        <h6{% if message.tags %} class="bg-success text-white text-center alert alert-{{ message.tags }}"{% endif %}>{{ message }}</h6>
+                    {% endif %}
+                    
+                {% endfor %}
+            
+            {% endif %}
+  
+          </div>         
+            
+            <div class="modal-body data-backdrop=true" id="modal-body">
+                <div class="m-1 text-center bg-opacity-50 text-secondary"><h4><strong >BIENES</strong></h4></div>
+                <div class=" bg-opacity-25 text-primary text-center"><h5><strong >AGREGAR IMAGENES</strong></h5></div>
+                <form action="{% url 'reg_img'  %}" method="post" enctype="multipart/form-data" id="form_add" class="card card-body text-center"> 
+                    {% csrf_token %}    
+                    {{ form }}
+                        
+                        <div class="modal-footer">
+                            <button class="close btn btn-success bg-opacity-75" type="button" onclick="modal_cerrar()">Cancelar</button>
+                            <button id="btn_add" type="button" onclick="registrar_img('{{ slug }}')" class="btn btn-primary bg-opacity-75">Agregar</button>
+                        </div>
+                </form>
+            </div>
+       </div>
+    </div>
+</div>

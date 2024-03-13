@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block contenido %}
+
+<div class="container">
+    <div class="m-3">
+
+          <div class="text-center dropup-center display-6 fw-bold opacity-50 fst-italic">LISTADO OPERADORES</div>
+          <div class="col-10 m-5 text-lg-center">
+              {% if messages %}
+
+                
+                  {% for message in messages %}
+                      {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                          <h6 {% if message.tags %}
+                          class="alert alert-danger alert-{{ message.tags }}"{% endif %} role="alert">{{ message }}</h6>
+                      {% endif %}
+                      {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                          <h6{% if message.tags %} class="bg-success text-white text-center alert alert-{{ message.tags }}"{% endif %}>{{ message }}</h6>
+                      {% endif %}
+                      
+                  {% endfor %}
+              
+              {% endif %}
+          
+          </div>
+    
+    
+    </div>
+  
+  <div class="mt-4">
+    <button onclick="modal_data('{% url 'add_operador' %}')" class="btn btn-block btn-primary opacity-50 btn-xs">Agregar</button>
+  </div>
+ <div class="div_separador">
+    Registros por página
+ </div>
+  <table id="modelos" class="table table-striped dt-responsive nowrap m-2 " style="width:100%" >
+  <thead>
+      <tr class="bg-primary text-white opacity-50" >
+          
+          <th scope="col">USUARIO OPERADOR</th>
+          <th scope="col">OFICINA</th>
+          <th scope="col">ACCIONES</th>
+          
+      </tr>
+  </thead>
+  <tbody>
+    {% for mrc in operadores %}
+      <tr>
+        
+        <td>{{ mrc.operador }}</td>
+        <td>{{ mrc.oficina }}</td>
+     
+          <td>
+            <button onclick="modal_data('{% url 'edit_operador' mrc.slug %}')"  class="btn btn-outline-primary">Edit</button>
+            <button onclick="modal_data('{% url 'del_operador' mrc.slug %}')"  class="btn btn-outline-danger">Eliminar</button>
+          </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+</div>
+<div class="modal fade" id="data" role="dialog">
+
+
+</div>
+
+{% endblock %}
+{% block codigo %}
+<script>
+  $(document).ready(function () {
+            //#users es el id de la tabla
+            $('#modelos').removeAttr('width').DataTable( {
+              dom: '<"wrapper"flitp>',
+              buttons: [
+               
+                    {
+                      extend: 'excelHtml5',
+                      text: '<i class="far fa-file-excel mr-2 btn btn-success btn-sm"></i>',
+                    },
+                    {
+                    extend: 'pdfHtml5',
+                    text: '<i class="far fa-file-pdf mr-2 btn btn-danger btn-sm"></i>',
+                    
+                    }
+              ],
+              columnDefs : [
+                
+                { "width": "40%", "targets": 0, "className": 'dt-head-center' },
+                { "width": "40%", "targets": 1, "className": 'dt-head-center' },
+                { "width": "20%", "targets": 2, "className": 'dt-center' },
+                
+               
+              ],
+                pageLength: 5,
+                fixedHeader: {
+                    header: true,
+                    footer: true
+                },
+                lengthMenu: [[5,10,20,-1],[5,10,20,'Todos']],
+                language: {
+                    zeroRecords: 'No se encontraron Registros',
+                    search:  'Buscar',
+                    lengthMenu:     " _MENU_ ",
+                    info: "REG: _START_ - _END_ de _TOTAL_ ",
+                
+                    paginate: {
+                        first:    '«',
+                        previous: '‹',
+                        next:     '›',
+                        last:     '»'
+                    },
+                    aria: {
+                        paginate: {
+                            first:    'Primera',
+                            previous: 'Anterior',
+                            next:     'Siguiente',
+                            last:     'Ultima'
+                        }
+                    }
+                
+                
+                
+                
+                
+                }
+                
+                   
+                
+            })
+        });
+
+        //esto es del sweetalert2
+
+//esto es del sweetalert2
+
+</script>
+<script src ="{% static 'admin/js/general/main.js' %}" ></script>
+{% endblock %}

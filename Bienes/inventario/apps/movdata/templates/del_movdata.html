@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block contenido %}
+
+        <form action="{% url 'del_movdata' object.slug %}" method="post" class="card card-body">
+            {% csrf_token %}
+            <p>Desea eliminar el Registro Clase:  {{ object.dsc_estado}}</p>
+            <div class="justify-content-center">
+                <button type="submit" class="btn btn-success">
+                    eliminar
+                </button>
+                <a href="{% url 'list_movdatas' %}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+ 
+{% endblock %}

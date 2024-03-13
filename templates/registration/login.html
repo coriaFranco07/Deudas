@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     {% load static %}    
+     <link href="{% static 'css/css.css' %}" rel="stylesheet" >
+	
+    <title>Registro</title>
+</head>
+<body class="login_in">
+    
+
+
+<div class="card-body align-items-center">
+    <div>
+        <h1 class="heading">REGISTRO UNICO DE PAGO</h1>
+    </div>
+    {% for message in messages %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+            <li{% if message.tags %} class="text-white alert alert-{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endif %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+            <li{% if message.tags %} class=" text-white alert alert-{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endif %}
+        
+{% endfor %}
+
+</div>
+
+
+<div class="container w-100 align-items-center">
+    
+    
+	<div class="screen">
+        
+		<div class="screen__content">
+			<form class="login" action="{% url 'login' %}" method="post">
+            {% if form.errors %}
+                <p class="text-white text-center bg-danger">Error de Inicio</p>
+                {% endif %}
+
+                {% csrf_token %}
+				<div class="login__field">
+					<i class="login__icon fas fa-user m-1"></i>
+					<input type="text" class="login__input" placeholder="Usuario" name="username">
+				</div>
+				<div class="login__field">
+					<i class="login__icon fas fa-lock m-1"></i>
+					<input type="password" class="login__input" placeholder="Contraseña" name="password">
+				</div>
+				<button  class="button login__submit">
+					<span class="button__text">Ingresar</span>
+					<i class="button__icon fas fa-chevron-right"></i>
+				</button>				
+			</form>
+			<div class="social-login">
+                <input class="form-check-input" type="checkbox" value="" id="loginCheck"  />
+                <label class="form-check-label " > Recuerdame </label>
+				
+			</div>
+		</div>
+		<div class="screen__background">
+			<span class="screen__background__shape screen__background__shape4"></span>
+			<span class="screen__background__shape screen__background__shape3"></span>		
+			<span class="screen__background__shape screen__background__shape2"></span>
+			<span class="screen__background__shape screen__background__shape1"></span>
+		</div>		
+	</div>
+</div>
+
+</body>
+</html>

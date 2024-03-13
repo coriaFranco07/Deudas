@@ -1,0 +1,378 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block contenido %}
+
+<div class="container">
+    <div class="m-3">
+
+          <div class="text-center dropup-center display-6 fw-bold opacity-50 fst-italic">REGISTRO UNICO DE PAGO</div>
+          <div class="col-10 m-5 text-lg-center">
+              {% if messages %}
+
+                
+                  {% for message in messages %}
+                      {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                          <h6 {% if message.tags %}
+                          class="alert alert-danger alert-{{ message.tags }}"{% endif %} role="alert">{{ message }}</h6>
+                      {% endif %}
+                      {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                          <h6{% if message.tags %} class="bg-success text-white text-center alert alert-{{ message.tags }}"{% endif %}>{{ message }}</h6>
+                      {% endif %}
+                      
+                  {% endfor %}
+              
+              {% endif %}
+          
+          </div>
+    
+    
+    </div>
+  
+  
+ <div class="div_separador">
+    Registros por página
+ </div>
+  <table id="lotes" class="table table-striped dt-responsive nowrap m-2 " style="width:100%" >
+  <thead>
+      <tr class="bg-primary text-white opacity-50" >
+          
+          <th scope="col">FECHA</th>
+          <th scope="col">REC.</th>
+          <th scope="col">GDE</th>
+          <th scope="col">OBSERV</th>
+          <th scope="col">FEC. EXP.</th>
+          <th scope="col">FEC. ESTADO</th>
+          <th scope="col">TIPO MOV.</th>
+          <th scope="col">DESCIP. PRIOR.</th>
+          <th scope="col">NIVEL PRIOR.</th>
+          <th scope="col">NORMA LEG. PRIOR.</th>
+          
+          
+          
+          
+ 
+          
+          
+      </tr>
+  </thead>
+  <tbody>
+    {% for mrc in movs %}
+      <tr>
+        
+        <td>{{ mrc.movi.fch_mov|date:'d-m-Y' }}</td>
+        <td>{{ mrc.movi.id_rec }}</td>
+        <td>{{ mrc.movi.gde_mov }}</td>
+        <td>{{ mrc.movi.obs_mov }}</td>
+        <td>{{ mrc.movi.fch_mov|date:'d-m-Y' }}</td>
+        <td>{{ mrc.movi.fch_std_mov|date:'d-m-Y' }}</td>
+        <td>{{ mrc.movi.id_std_mov.dsc_std_mov }}</td>
+        <td>{{ mrc.prior.id_prior.dsc_prior }}</td>
+        <td>{{ mrc.prior.id_prior.nivel_prior }}</td>
+        <td>{{ mrc.prior.norma_legal_prior }}</td>
+     
+
+        
+        
+        
+          
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+</div>
+<div class="modal fade" id="data" role="dialog">
+
+
+</div>
+
+{% endblock %}
+{% block codigo %}
+<script>
+  $(document).ready(function () {
+            //#users es el id de la tabla
+            $('#lotes').removeAttr('width').DataTable( {
+              deferRender: true,
+              
+              dom: 'fBlitp',
+              buttons: [
+                
+
+              
+          
+
+                    {
+                    extend: 'excelHtml5',
+                    text: '<i class="far fa-file-excel mr-2 btn btn-success btn-sm"></i>',
+                    title: 'INFORME DE MOVIMIENTOS',
+                      
+                      
+                    exportOptions: {
+                          columns: [0,1, 2, 3, 4, 5,6,7,8,9],
+                          excelStyles: [                      // Add an excelStyles definition
+                              {                 
+                                template: 'cyan_medium',
+                              },
+                             
+                              {
+                                 // cells: ['A','B','C'],  // Use Smart References (s) to target the header row (h) 
+                                                 
+                                  style: {                    // The style definition
+                                      font: {                 // Style the font
+                                          name: 'Arial',
+                                          size: '8',           // Size 14
+                                          b: false,
+                                          i:true,
+                                                    // Turn off the default bolding of the header row
+                                          
+                                      },
+                                      
+                                      alignment: {
+                                        vertical: "center",
+                                        horizontal: "center",
+                                        wrapText: false,
+                                     },
+                                    
+ 
+                                  },
+                              },
+                              {
+                                  cells: 'sh',  // Use Smart References (s) to target the header row (h) 
+                                                 
+                                  style: {                    // The style definition
+                                      font: {                 // Style the font
+                                          name: 'Arial',
+                                          size: '10',           // Size 14
+                                          b: true,
+                                          color: 'FFFFFF',           // Turn off the default bolding of the header row
+                                          
+                                      },
+                                      fill: {                 // Style the cell fill
+                                          pattern: {          // Add a pattern (default is solid)
+                                              color: '1C3144', // Define the fill color
+                                              
+                                              
+                                          }
+                                      },
+                                      alignment: {
+                                        vertical: "center",
+                                        horizontal: "center",
+                                        wrapText: false,
+                                     },
+ 
+                                  },
+                              },
+                           
+                              {
+                                  cells: 'st',  // Use Smart References (s) to target the header row (h) 
+                                                 
+                                  style: {                    // The style definition
+                                      font: {                 // Style the font
+                                          name: 'Arial',
+                                          size: '20',           // Size 14
+                                          b: true,
+                                          color: 'FFFFFF',           // Turn off the default bolding of the header row
+                                          
+                                      },
+                                      fill: {                 // Style the cell fill
+                                          pattern: {          // Add a pattern (default is solid)
+                                              color: '1C3144', // Define the fill color
+                                              
+                                              
+                                          }
+                                      },
+                                      alignment: {
+                                        vertical: "center",
+                                        horizontal: "center",
+                                        wrapText: false,
+                                     },
+ 
+                                  },
+                              },
+                           
+                           
+                          {
+                            cells: ['sA'],  //condicion para las filas de la columna A
+                            
+                            style:{
+                              font:{
+                                name: 'Arial',
+                                size: '8',           // Size 14
+                                b: true,
+                                
+                                
+                              },
+                              
+                            },
+                            fill: {                 // Style the cell fill
+                                     pattern: {          // Add a pattern (default is solid)
+                                        color: '1C3144', // Define the fill color
+                                              
+                                              
+                                     }
+                                   },
+                          },
+                        ],      
+                      
+
+
+                    },  
+                    
+                    },
+                    {
+                    extend: 'pdfHtml5',
+                    orientation: 'landscape',
+                    pageSize: 'LEGAL',
+                    text: '<i class="far fa-file-pdf mr-2 btn btn-danger btn-sm"></i>',
+                    title: 'INFORME DE MOVIMIENTOS',
+                      
+                      
+                      exportOptions: {
+                            columns: [0,1, 2, 3, 4, 5,6,7,8,9],
+                            pageStyle: {
+                                sheetPr: {
+                                    pageSetUpPr: {
+                                        fitToPage: 1            // Fit the printing to the page
+                                    } 
+                                },
+                                printOptions: {
+                                    horizontalCentered: true,
+                                    verticalCentered: true,
+                                },
+                                pageSetup: {
+                                    orientation: "landscape",   // Orientation
+                                    paperSize: "1",             // Paper size (1 = Letter, 9 = A4)
+                                    fitToWidth: "100",            // Fit to page width
+                                    fitToHeight: "0",           // Fit to page height
+                                },
+                                pageMargins: {
+                                    left: "0.1",
+                                    right: "0.1",
+                                    top: "0.4",
+                                    bottom: "0.4",
+                                    header: "2",
+                                    footer: "2",
+                                },
+                                repeatHeading: true,    // Repeat the heading row at the top of each page
+                                repeatCol: 'A:A',       // Repeat column A (for pages wider than a single printed page)
+                            },
+                            
+                            
+                            excelStyles: [                      // Add an excelStyles definition
+                                {                 
+                                  template: 'cyan_medium',
+                                 
+                                },
+                                
+                                {
+
+                                   // cells: ['A','B','C'],  // Use Smart References (s) to target the header row (h) 
+                                                   
+                                    style: {                    // The style definition
+                                        font: {                 // Style the font
+                                            name: 'Arial',
+                                            size: '4',           // Size 14
+                                            b: false,
+                                            i:true,
+                                                      // Turn off the default bolding of the header row
+                                            
+                                        },
+                                        
+                                        alignment: {
+                                          vertical: "center",
+                                          horizontal: "center",
+                                          wrapText: false,
+                                       },
+                                       title: {
+                                          alignment: 'center',
+                                          fontSize: '14',
+                                      },
+
+                                      
+                                      
+   
+                                    },
+                                },
+                               
+                            ],      
+                           
+  
+  
+  
+                      },  
+                      
+                    
+                    },
+               /*      {
+                        popoverTitle: 'Colum. Visibles',
+                        extend: 'colvis',
+                        collectionLayout: 'tree-column',
+                        text: 'Columnas Visibles',
+                        columns: ':eq(1),:eq(2),:eq(3),:eq(4),:eq(5),:eq(6),:eq(7),:eq(8),:eq(9),:eq(10),:eq(16),:eq(17),:eq(18),:eq(19),:eq(20),:eq(21),:eq(22)'
+                    }, */
+              ],
+              
+              
+             
+              columnDefs : [
+                
+                { "width": "5%", "targets": 0, "className": 'dt-center' },
+                { "width": "5%", "targets": 1, "className": 'dt-head-center' },
+                { "width": "5%", "targets": 2, "className": 'dt-head-center' },
+                { "width": "5%", "targets": 3, "className": 'dt-center' },
+                { "width": "5%", "targets": 4, "className": 'dt-center' },
+                { "width": "5%", "targets": 5, "className": 'dt-center' },
+                { "width": "5%", "targets": 6, "className": 'dt-center' },
+                { "width": "5%", "targets": 7, "className": 'dt-center' },
+                { "width": "5%", "targets": 8, "className": 'dt-center' },
+                { "width": "5%", "targets": 9, "className": 'dt-center' },
+                
+                
+                
+               
+              ],
+                pageLength: 20,
+                fixedHeader: {
+                    header: true,
+                    footer: true
+                },
+                lengthMenu: [[5,10,20,-1],[5,10,20,'Todos']],
+                language: {
+                    zeroRecords: 'No se encontraron Registros',
+                    search:  'Buscar',
+                    lengthMenu:     " _MENU_ ",
+                    info: "REG: _START_ - _END_ de _TOTAL_ ",
+                
+                    paginate: {
+                        first:    '«',
+                        previous: '‹',
+                        next:     '›',
+                        last:     '»'
+                    },
+                    aria: {
+                        paginate: {
+                            first:    'Primera',
+                            previous: 'Anterior',
+                            next:     'Siguiente',
+                            last:     'Ultima'
+                        }
+                    }
+                
+                
+                
+                
+                
+                }
+                
+                   
+                
+            })
+        });
+
+        //esto es del sweetalert2
+
+//esto es del sweetalert2
+
+</script>
+<script src ="{% static '/main.js' %}" ></script>
+{% endblock %}
